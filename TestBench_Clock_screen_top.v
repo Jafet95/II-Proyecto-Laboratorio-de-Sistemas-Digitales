@@ -2,17 +2,17 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: Jafet Chaves Barrantes
+// Engineer:
 //
-// Create Date:   13:08:36 03/21/2016
-// Design Name:   timing_generator_VGA
-// Module Name:   C:/Users/Jafet/Documents/Proyectos Dis.Sist.Digitales/II_Proyecto_Laboratorio_Sistemas_Digitales/Archivos .v/II-Proyecto-Laboratorio-de-Sistemas-Digitales/TestBench_timing_generator_VGA.v
+// Create Date:   16:25:37 03/22/2016
+// Design Name:   Clock_screen_top
+// Module Name:   C:/Users/Jafet/Documents/Proyectos Dis.Sist.Digitales/II_Proyecto_Laboratorio_Sistemas_Digitales/Archivos .v/II-Proyecto-Laboratorio-de-Sistemas-Digitales/TestBench_Clock_screen_top.v
 // Project Name:  II_Proyecto_Laboratorio_Sistemas_Digitales
 // Target Device:  
 // Tool versions:  
 // Description: 
 //
-// Verilog Test Fixture created by ISE for module: timing_generator_VGA
+// Verilog Test Fixture created by ISE for module: Clock_screen_top
 //
 // Dependencies:
 // 
@@ -22,7 +22,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module TestBench_timing_generator_VGA;
+module TestBench_Clock_screen_top;
 
 	// Inputs
 	reg clk;
@@ -31,23 +31,18 @@ module TestBench_timing_generator_VGA;
 	// Outputs
 	wire hsync;
 	wire vsync;
-	wire video_on;
-	wire p_tick;
-	wire [9:0] pixel_x;
-	wire [9:0] pixel_y;
+	wire [11:0] RGB;
 
 	// Instantiate the Unit Under Test (UUT)
-	timing_generator_VGA uut (
+	Clock_screen_top uut (
 		.clk(clk), 
 		.reset(reset), 
 		.hsync(hsync), 
 		.vsync(vsync), 
-		.video_on(video_on), 
-		.p_tick(p_tick), 
-		.pixel_x(pixel_x), 
-		.pixel_y(pixel_y)
+		.RGB(RGB),
+		.pixel_tick(pixel_tick)
 	);
-	
+
 	//Para generar clock de 100 MHz
 	initial begin
 	clk = 0;
@@ -70,6 +65,13 @@ module TestBench_timing_generator_VGA;
 		#50000000$stop;	
 		
 	end
+	
+initial begin
+$timeformat(-5,1,"ns",4);
+$display("hsync vsync RGB[0] RGB[1] RGB[2] RGB[3] RGB[4] RGB[5] RGB[6] RGB[7] RGB[8] RGB[9] RGB[10] RGB[11]");
+$monitor("%t: %b %b %b %b %b %b %b %b %b %b %b %b %b %b", $realtime,
+hsync, vsync, RGB[0],RGB[1],RGB[2],RGB[3],RGB[4],RGB[5],RGB[6],RGB[7],RGB[8],RGB[9],RGB[10],RGB[11]);
+end
       
 endmodule
 
