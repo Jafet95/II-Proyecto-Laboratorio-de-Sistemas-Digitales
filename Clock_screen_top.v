@@ -21,16 +21,22 @@
 module Clock_screen_top
 (
 input wire clk, reset,
+input wire [3:0] digit0_HH, digit1_HH, digit0_MM, digit1_MM, digit0_SS, digit1_SS,//
+digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
+digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
+input wire AM_PM,
+input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 output wire hsync,vsync,
-output wire [11:0] RGB,
-output wire pixel_tick
+output wire [11:0] RGB
+//output wire pixel_tick
 );
 
 wire [9:0] pixel_x,pixel_y;
 wire video_on; 
-//wire pixel_tick;
-reg [11:0] RGB_reg;
-wire [11:0] RGB_next;
+wire pixel_tick;
+reg [11:0] RGB_reg, RGB_next;
+wire text_on, graph_on;
+wire [11:0] fig_RGB, text_RGB;
 
 //Instanciaciones
 
@@ -51,7 +57,45 @@ generador_figuras Instancia_generador_figuras
 .video_on(video_on),//señal que indica que se encuentra en la región visible de resolución 640x480
 .pixel_x(pixel_x), 
 .pixel_y(pixel_y),//coordenadas xy de cada pixel
-.fig_RGB(RGB) //12 bpp (4 bits para cada color)
+.graph_on(graph_on),
+.fig_RGB(fig_RGB) //12 bpp (4 bits para cada color)
 );
+
+generador_caracteres Instancia_generador_caracteres
+(
+.clk(clk),
+.digit0_HH(digit0_HH), .digit1_HH(digit1_HH), .digit0_MM(digit0_MM), .digit1_MM(digit1_MM), .digit0_SS(digit0_SS), .digit1_SS(digit1_SS),//
+.digit0_DAY(digit0_DAY), .digit1_DAY(digit1_DAY), .digit0_MES(digit0_MES), .digit1_MES(digit1_MES), .digit0_YEAR(digit0_YEAR), .digit1_YEAR(digit1_YEAR),//
+.digit0_HH_T(digit0_HH_T), .digit1_HH_T(digit1_HH_T), .digit0_MM_T(digit0_MM_T), .digit1_MM_T(digit1_MM_T), .digit0_SS_T(digit0_SS_T), .digit1_SS_T(digit1_SS_T),//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
+.AM_PM(AM_PM),//Entrada para conocer si en la información de hora se despliega AM o PM
+.dia_semana(dia_semana),//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
+.pixel_x(pixel_x), .pixel_y(pixel_y),
+.text_on(text_on), //7 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
+.text_RGB(text_RGB) //12 bpp (4 bits para cada color)
+);
+
+//Multiplexión entre texto o figuras
+
+/*Cuando haya que controlar la aparición
+de RING o AM/PM se modifica esta parte nada más
+ver pg.365 Pong (en ese caso se agrega entrada IRQ y formato_HORA) */
+
+always@*
+begin
+
+	if(~video_on)
+	RGB_next = "0";//Fuera la pantalla visible
+	
+	else
+		if(text_on) RGB_next = text_RGB;
+		else if(graph_on) RGB_next = fig_RGB;
+		else RGB_next = 12'h000;//Fondo negro
+end
+
+always @(posedge clk)
+if (pixel_tick) RGB_reg <= RGB_next;
+
+//Salida al monitor VGA
+assign RGB = RGB_reg;
 
 endmodule

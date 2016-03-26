@@ -23,6 +23,7 @@ module generador_figuras
 (
 input wire video_on,//señal que indica que se encuentra en la región visible de resolución 640x480
 input wire [9:0] pixel_x, pixel_y,//coordenadas xy de cada pixel
+output wire graph_on,
 output reg [11:0] fig_RGB //12 bpp (4 bits para cada color)
 );
 
@@ -101,5 +102,7 @@ begin
 		else if (BOX_RING_on) fig_RGB = BOX_RING_RGB;
 		else fig_RGB = 12'b0;//fondo negro
 end
-		
+
+assign graph_on = BOX_H_on | BOX_F_on | BOX_T_on | BOX_RING_on;
+	
 endmodule

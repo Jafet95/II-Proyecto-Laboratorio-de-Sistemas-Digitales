@@ -32,8 +32,8 @@ we_1      , // Write Enable/Read Enable
 oe_1        // Output Enable
 ); 
 
-parameter data_0_WIDTH = 8 ;
-parameter ADDR_WIDTH = 8 ;
+parameter data_0_WIDTH = 7 ;
+parameter ADDR_WIDTH = 12 ;
 parameter RAM_DEPTH = 1 << ADDR_WIDTH;
 
 //--------------Input Ports----------------------- 
@@ -58,6 +58,7 @@ reg [data_0_WIDTH-1:0] mem [0:RAM_DEPTH-1];
 
 //--------------Code Starts Here------------------ 
 // Memory Write Block 
+
 // Write Operation : When we_0 = 1, cs_0 = 1
 always @ (posedge clk)
 begin : MEM_WRITE
@@ -84,9 +85,11 @@ begin : MEM_READ_0
 end 
 
 //Second Port of RAM
+
 // Tri-State Buffer control 
 // output : When we_0 = 0, oe_0 = 1, cs_0 = 1
 assign data_1 = (cs_1 && oe_1 && !we_1) ? data_1_out : 8'bz; 
+
 // Memory Read Block 1 
 // Read Operation : When we_1 = 0, oe_1 = 1, cs_1 = 1
 always @ (posedge clk)
