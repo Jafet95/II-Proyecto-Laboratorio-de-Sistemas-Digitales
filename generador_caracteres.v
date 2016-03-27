@@ -26,8 +26,10 @@ digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-input wire [9:0] pixel_x, pixel_y,
-output wire text_on, //9 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
+input wire [1:0] funcion,//2-bits: cuatro estados del modo configuración
+input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
+input wire [9:0] pixel_x, pixel_y,//Coordenada de cada pixel
+output wire text_on, //10 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
 output reg [11:0] text_RGB //12 bpp (4 bits para cada color)
 );
 
@@ -42,10 +44,11 @@ wire [7:0] font_word;//Fila de pixeles del patrón de caracter en particular
 wire font_bit;//1 pixel del font_word específicado por bit_addr
 
 //Direcciones "auxiliares" para cada uno de los 9 textos a mostrar
-reg [6:0] char_addr_HORA, char_addr_digHORA, char_addr_digFECHA, char_addr_DIA, char_addr_TIMER, char_addr_digTIMER, char_addr_RING, char_addr_AMPM, char_addr_LOGO;
-wire [3:0] row_addr_HORA, row_addr_digHORA, row_addr_digFECHA, row_addr_DIA, row_addr_TIMER,row_addr_digTIMER, row_addr_RING, row_addr_AMPM, row_addr_LOGO;
-wire [2:0] bit_addr_HORA, bit_addr_digHORA, bit_addr_digFECHA, bit_addr_DIA, bit_addr_TIMER, bit_addr_digTIMER, bit_addr_RING, bit_addr_AMPM, bit_addr_LOGO; 
+reg [6:0] char_addr_HORA, char_addr_digHORA, char_addr_digFECHA, char_addr_DIA, char_addr_TIMER, char_addr_digTIMER, char_addr_RING, char_addr_AMPM, char_addr_LOGO, char_addr_cursor;
+wire [3:0] row_addr_HORA, row_addr_digHORA, row_addr_digFECHA, row_addr_DIA, row_addr_TIMER,row_addr_digTIMER, row_addr_RING, row_addr_AMPM, row_addr_LOGO, row_addr_cursor;
+wire [2:0] bit_addr_HORA, bit_addr_digHORA, bit_addr_digFECHA, bit_addr_DIA, bit_addr_TIMER, bit_addr_digTIMER, bit_addr_RING, bit_addr_AMPM, bit_addr_LOGO, bit_addr_cursor; 
 wire HORA_on, digHORA_on, digFECHA_on, DIA_on, TIMER_on, digTIMER_on, RING_on, AMPM_on, LOGO_on;
+reg cursor_on;
 	
 //Instanciación de la font ROM
 font_rom Instancia_font_unit
@@ -111,7 +114,7 @@ begin
 end
 
 //4.Día de la semana(tamaño de fuente 16x32)
-assign DIA_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]>=8)&&(pixel_x[9:4]<=15);
+assign DIA_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]>=8)&&(pixel_x[9:4]<=16);
 assign row_addr_DIA = pixel_y[4:1];
 assign bit_addr_DIA = pixel_x[3:1];
 
@@ -277,7 +280,7 @@ begin
 end
 
 //6.Dígitos para la cuenta del TIMER(tamaño de fuente 16x32)
-assign digTIMER_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]>=26)&&(pixel_x[9:4]<=30);
+assign digTIMER_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]>=26)&&(pixel_x[9:4]<=33);
 assign row_addr_digTIMER = pixel_y[4:1];
 assign bit_addr_digTIMER = pixel_x[3:1];
 
@@ -329,7 +332,7 @@ begin
 	endcase
 	end
 	
-	1'b1: char_addr_AMPM = 7'h50;//M
+	1'b1: char_addr_AMPM = 7'h4d;//M
 	endcase	
 end
 
@@ -341,24 +344,75 @@ assign bit_addr_LOGO = pixel_x[2:0];
 always@*
 begin
 	case(pixel_x[7:4])
-	4'h0: char_addr_LOGO = 7'h50;//R
-	4'h1: char_addr_LOGO = 7'h50;//T
-	4'h2: char_addr_LOGO = 7'h50;//C
-	4'h3: char_addr_LOGO = 7'h50;//Espacio
-	4'h4: char_addr_LOGO = 7'h50;//D
-	4'h5: char_addr_LOGO = 7'h50;//I
-	4'h6: char_addr_LOGO = 7'h50;//S
+	4'h0: char_addr_LOGO = 7'h52;//R
+	4'h1: char_addr_LOGO = 7'h54;//T
+	4'h2: char_addr_LOGO = 7'h43;//C
+	4'h3: char_addr_LOGO = 7'h00;//Espacio
+	4'h4: char_addr_LOGO = 7'h44;//D
+	4'h5: char_addr_LOGO = 7'h49;//I
+	4'h6: char_addr_LOGO = 7'h53;//S
 	4'h7: char_addr_LOGO = 7'h50;//P
-	4'h8: char_addr_LOGO = 7'h50;//L
-	4'h9: char_addr_LOGO = 7'h50;//A
-	4'ha: char_addr_LOGO = 7'h50;//Y
-	4'hb: char_addr_LOGO = 7'h50;//Espacio
-	4'hc: char_addr_LOGO = 7'h50;//v
-	4'hd: char_addr_LOGO = 7'h50;//1
-	4'he: char_addr_LOGO = 7'h50;//.
-	4'hf: char_addr_LOGO = 7'h50;//0
+	4'h8: char_addr_LOGO = 7'h4c;//L
+	4'h9: char_addr_LOGO = 7'h41;//A
+	4'ha: char_addr_LOGO = 7'h59;//Y
+	4'hb: char_addr_LOGO = 7'h00;//Espacio
+	4'hc: char_addr_LOGO = 7'h56;//v
+	4'hd: char_addr_LOGO = 7'h31;//1
+	4'he: char_addr_LOGO = 7'h2e;//.
+	4'hf: char_addr_LOGO = 7'h30;//0
 	endcase	
 end
+
+//10.Flecha cursor(tamaño de fuente 16x32)(posición variable)
+always@*
+begin
+	case(funcion)//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 3: config.timer)
+	
+	2'h0: 
+	begin
+	char_addr_cursor = 7'h00;//Espacio en blanco
+	cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=25)&&(pixel_x[9:4]<=28);
+	end
+	
+	2'h1://Hora
+	begin
+	char_addr_cursor = 7'h1e;//flecha hacia arriba
+	case(cursor_location)//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
+	2'h0: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=25)&&(pixel_x[9:4]<=28);//4 flechas
+	2'h1: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=19)&&(pixel_x[9:4]<=22);
+	2'h2: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=13)&&(pixel_x[9:4]<=16);
+	default: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=25)&&(pixel_x[9:4]<=28);
+	endcase
+	end
+	
+	2'h2://Fecha
+	begin
+	char_addr_cursor = 7'h1e;//flecha hacia arriba
+	case(cursor_location)//(0: primeros dos dígitos a la derecha, 1: dos dígitos intermedios, 2: últimos dos dígitos a la izquierda)
+	2'h0: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=14)&&(pixel_x[9:4]<=15);//2 flechas
+	2'h1: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=11)&&(pixel_x[9:4]<=12);
+	2'h2: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=8)&&(pixel_x[9:4]<=9);
+	default: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=14)&&(pixel_x[9:4]<=15);
+	endcase
+	end
+	
+	2'h3://Timer
+	begin
+	char_addr_cursor = 7'h1e;//flecha hacia arriba
+	case(cursor_location)//(0: primeros dos dígitos a la derecha, 1: dos dígitos intermedios, 2: últimos dos dígitos a la izquierda)
+	2'h0: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=32)&&(pixel_x[9:4]<=33);//2 flechas
+	2'h1: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=29)&&(pixel_x[9:4]<=30);
+	2'h2: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=26)&&(pixel_x[9:4]<=27);
+	default: cursor_on = (pixel_y[9:5]==11)&&(pixel_x[9:4]<=13)&&(pixel_x[9:4]<=16);
+	endcase
+	end
+	
+	endcase
+end
+
+assign row_addr_cursor = pixel_y[4:1];
+assign bit_addr_cursor = pixel_x[3:1];
+
 
 //Multiplexar las direcciones para font ROM y salida RBG
 always @*
@@ -430,17 +484,25 @@ text_RGB = 12'b0;//Fondo negro
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
 		end
 
-	else
-		begin
+	else if (LOGO_on)
+		begin 
 		char_addr = char_addr_LOGO;
       row_addr = row_addr_LOGO;
       bit_addr = bit_addr_LOGO;
 			if(font_bit) text_RGB = 12'hF11; //Blanco
 		end
+	
+	else
+		begin 
+		char_addr = char_addr_cursor;
+      row_addr = row_addr_cursor;
+      bit_addr = bit_addr_cursor;
+			if(font_bit) text_RGB = 12'hF11; //Blanco
+		end	
 
 end
 
-assign text_on = HORA_on|digHORA_on|digFECHA_on|DIA_on|TIMER_on|digTIMER_on|RING_on|AMPM_on|LOGO_on;//9 bloques de texto en total
+assign text_on = HORA_on|digHORA_on|digFECHA_on|DIA_on|TIMER_on|digTIMER_on|RING_on|AMPM_on|LOGO_on|cursor_on;//10 bloques de texto en total
 
 //Interfaz con la font ROM
 assign rom_addr = {char_addr, row_addr};
@@ -448,7 +510,7 @@ assign font_bit = font_word[~bit_addr];
 
 endmodule
 /*
-Nota: Los 9 textos a mostrar son
+Nota: Los 10 textos a mostrar son
 1.La palabra HORA
 2.Los dígitos para la hora
 3.Los números de la fecha
@@ -458,4 +520,5 @@ Nota: Los 9 textos a mostrar son
 7.La palabra RING
 8.AM o PM
 9.RTC DISPLAY v1.0
+10.Una flecha que hace de cursor para el modo configuración (posición variable)
 */

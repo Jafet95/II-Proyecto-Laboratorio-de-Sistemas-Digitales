@@ -24,8 +24,10 @@ input wire clk, reset,
 input wire [3:0] digit0_HH, digit1_HH, digit0_MM, digit1_MM, digit0_SS, digit1_SS,//
 digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
-input wire AM_PM,
+input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
+input wire [1:0] funcion,//2-bits: cuatro estados del modo configuración
+input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
 output wire hsync,vsync,
 output wire [11:0] RGB
 //output wire pixel_tick
@@ -69,6 +71,8 @@ generador_caracteres Instancia_generador_caracteres
 .digit0_HH_T(digit0_HH_T), .digit1_HH_T(digit1_HH_T), .digit0_MM_T(digit0_MM_T), .digit1_MM_T(digit1_MM_T), .digit0_SS_T(digit0_SS_T), .digit1_SS_T(digit1_SS_T),//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 .AM_PM(AM_PM),//Entrada para conocer si en la información de hora se despliega AM o PM
 .dia_semana(dia_semana),//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
+.funcion(funcion),//2-bits: cuatro estados del modo configuración
+.cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
 .pixel_x(pixel_x), .pixel_y(pixel_y),
 .text_on(text_on), //7 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
 .text_RGB(text_RGB) //12 bpp (4 bits para cada color)

@@ -33,30 +33,29 @@ output reg [11:0] fig_RGB //12 bpp (4 bits para cada color)
 localparam MAX_X = 640;
 localparam MAX_Y = 480;
 
-//Límites del recuadro para la hora (320x120)
+//Límites del recuadro para la hora (320x192)
 localparam BOX_H_XL = 160; //Límite izquierdo
 localparam BOX_H_XR = 479; //Límite derecho
-//localparam BOX_H_YSIZE = 120; //Tamaño vertical
-localparam BOX_H_YT = 80;// Límite superior
-localparam BOX_H_YB = 199;//Límite inferior
+localparam BOX_H_YT = 64;// Límite superior
+localparam BOX_H_YB = 255;//Límite inferior
 
-//Límites del recuadro para la fecha (250x120)
-localparam BOX_F_XL = 50;//Límite izquierdo
-localparam BOX_F_XR = 299;//Límite derecho
-localparam BOX_F_YT = 280;//Límite superior
-localparam BOX_F_YB = 399;//Límite inferior
+//Límites del recuadro para la fecha (256x96)
+localparam BOX_F_XL = 48;//Límite izquierdo
+localparam BOX_F_XR = 303;//Límite derecho
+localparam BOX_F_YT = 352;//Límite superior
+localparam BOX_F_YB = 447;//Límite inferior
 
-//Límites del recuadro para el timer (250x120)
-localparam BOX_T_XL = 340;//Límite izquierdo
-localparam BOX_T_XR = 589;//Límite derecho
-localparam BOX_T_YT = 280;//Límite superior
-localparam BOX_T_YB = 399;//Límite inferior
+//Límites del recuadro para el timer (256x96)
+localparam BOX_T_XL = 336;//Límite izquierdo
+localparam BOX_T_XR = 591;//Límite derecho
+localparam BOX_T_YT = 352;//Límite superior
+localparam BOX_T_YB = 447;//Límite inferior
 
-//Límites del recuadro para de alarma "ring" (40x40)
-localparam BOX_RING_XL = 550;//Límite izquierdo
-localparam BOX_RING_XR = 589;//Límite derecho
-localparam BOX_RING_YT = 80;// Límite superior
-localparam BOX_RING_YB = 119;//Límite inferior
+//Límites del recuadro para de alarma "ring" (48x48)
+localparam BOX_RING_XL = 544;//Límite izquierdo
+localparam BOX_RING_XR = 591;//Límite derecho
+localparam BOX_RING_YT = 64;// Límite superior
+localparam BOX_RING_YB = 111;//Límite inferior
 
 //Señales de salida de los objetos
 wire BOX_H_on, BOX_F_on, BOX_T_on, BOX_RING_on;
