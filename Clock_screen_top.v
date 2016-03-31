@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module Clock_screen_top
 (
-input wire clk, reset,
+input wire clock, reset,
 input wire [3:0] digit0_HH, digit1_HH, digit0_MM, digit1_MM, digit0_SS, digit1_SS,//
 digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
@@ -44,7 +44,7 @@ wire [11:0] fig_RGB, text_RGB;
 
 timing_generator_VGA Instancia_timing_generator_VGA
 (
-.clk(clk),
+.clk(clock),
 .reset(reset),
 .hsync(hsync),
 .vsync(vsync),
@@ -65,7 +65,7 @@ generador_figuras Instancia_generador_figuras
 
 generador_caracteres Instancia_generador_caracteres
 (
-.clk(clk),
+.clk(clock),
 .digit0_HH(digit0_HH), .digit1_HH(digit1_HH), .digit0_MM(digit0_MM), .digit1_MM(digit1_MM), .digit0_SS(digit0_SS), .digit1_SS(digit1_SS),//
 .digit0_DAY(digit0_DAY), .digit1_DAY(digit1_DAY), .digit0_MES(digit0_MES), .digit1_MES(digit1_MES), .digit0_YEAR(digit0_YEAR), .digit1_YEAR(digit1_YEAR),//
 .digit0_HH_T(digit0_HH_T), .digit1_HH_T(digit1_HH_T), .digit0_MM_T(digit0_MM_T), .digit1_MM_T(digit1_MM_T), .digit0_SS_T(digit0_SS_T), .digit1_SS_T(digit1_SS_T),//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
@@ -81,7 +81,7 @@ generador_caracteres Instancia_generador_caracteres
 //Multiplexión entre texto o figuras
 
 /*Cuando haya que controlar la aparición
-de RING o AM/PM se modifica esta parte nada más
+de RING o AM/PM (el cursor se controla desde antes) se modifica esta parte nada más
 ver pg.365 Pong (en ese caso se agrega entrada IRQ y formato_HORA) */
 
 always@*
@@ -96,7 +96,7 @@ begin
 		else RGB_next = 12'h000;//Fondo negro
 end
 
-always @(posedge clk)
+always @(posedge clock)
 if (pixel_tick) RGB_reg <= RGB_next;
 
 //Salida al monitor VGA
