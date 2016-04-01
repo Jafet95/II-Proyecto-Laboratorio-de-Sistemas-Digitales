@@ -33,7 +33,7 @@ digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T;
 
 wire AM_PM;
 wire [2:0] dia_semana;
-wire [1:0] funcion;
+wire funcion;
 wire [1:0] cursor_location;
 
 bloque_prueba_frames Instancia_bloque_prueba_frames
@@ -56,7 +56,7 @@ Clock_screen_top Instancia_Clock_screen_top
 .digit0_HH_T(digit0_HH_T), .digit1_HH_T(digit1_HH_T), .digit0_MM_T(digit0_MM_T), .digit1_MM_T(digit1_MM_T), .digit0_SS_T(digit0_SS_T), .digit1_SS_T(digit1_SS_T),//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 .AM_PM(AM_PM),//Entrada para conocer si en la información de hora se despliega AM o PM
 .dia_semana(dia_semana),//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-.funcion(funcion),//2-bits: cuatro estados del modo configuración
+.config_mode(funcion),//1-bit: OR de los tres estados del modo configuración
 .cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
 .hsync(hsync),.vsync(vsync),
 .RGB(RGB)

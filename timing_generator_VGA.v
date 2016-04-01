@@ -30,7 +30,7 @@ output wire [9:0] pixel_x, pixel_y
 //Parámetros para VGA 640x480 
 localparam HD = 640;//área de despliegue horizontal
 localparam HF = 48;// borde izquierdo horizontal
-localparam HB = 16;//borde derecho horizontal
+localparam HB = 16;//borde derecho horizontal(16)
 localparam HR = 96;//retraso horizontal
 localparam VD = 480;//área de despliegue vertical
 localparam VF = 10;//borde superior vertical
