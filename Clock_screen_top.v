@@ -26,7 +26,7 @@ digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-input wire config_mode,//1-bit: OR de los tres estados del modo configuración
+input wire [1:0]config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
 output wire hsync,vsync,
 output wire [11:0] RGB

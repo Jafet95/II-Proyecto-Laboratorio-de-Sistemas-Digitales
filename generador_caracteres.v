@@ -26,7 +26,7 @@ digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-input wire config_mode,//1-bit: OR de los tres estados del modo configuración
+input wire [1:0]config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
 input wire [9:0] pixel_x, pixel_y,//Coordenada de cada pixel
 output wire text_on, //10 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
@@ -422,12 +422,13 @@ text_RGB = 12'b0;//Fondo negro
       row_addr = row_addr_digHORA;
       bit_addr = bit_addr_digHORA;
 			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
+			//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 3: config.timer)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:5]>=6)&&(pixel_x[9:5]<=7)&&(cursor_location==2)) 
+			else if ((~font_bit)&&(config_mode == 1)&&(pixel_y[9:6]==2)&&(pixel_x[9:5]>=6)&&(pixel_x[9:5]<=7)&&(cursor_location==2)) 
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:5]>=9)&&(pixel_x[9:5]<=10)&&(cursor_location==1))
+			else if ((~font_bit)&&(config_mode == 1)&&(pixel_y[9:6]==2)&&(pixel_x[9:5]>=9)&&(pixel_x[9:5]<=10)&&(cursor_location==1))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:5]>=12)&&(pixel_x[9:5]<=13)&&(cursor_location==0))
+			else if ((~font_bit)&&(config_mode == 1)&&(pixel_y[9:6]==2)&&(pixel_x[9:5]>=12)&&(pixel_x[9:5]<=13)&&(cursor_location==0))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
 			else if(~font_bit) text_RGB = 12'h0AA;//Fondo del texto igual al de los recuadros
 		end
@@ -439,11 +440,11 @@ text_RGB = 12'b0;//Fondo negro
       bit_addr = bit_addr_digFECHA;
 			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=8)&&(cursor_location==2)) 
+			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=8)&&(cursor_location == 2)) 
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=10)&&(pixel_x[9:4]<=11)&&(cursor_location==1))
+			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=10)&&(pixel_x[9:4]<=11)&&(cursor_location==1))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=13)&&(pixel_x[9:4]<=14)&&(cursor_location==0))
+			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=13)&&(pixel_x[9:4]<=14)&&(cursor_location==0))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
 			else if(~font_bit) text_RGB = 12'h0AA;//Fondo del texto igual al de los recuadros
 		end
@@ -471,11 +472,11 @@ text_RGB = 12'b0;//Fondo negro
       bit_addr = bit_addr_digTIMER;
 			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=25)&&(pixel_x[9:4]<=26)&&(cursor_location==2)) 
+			else if ((~font_bit)&&(config_mode == 3)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=25)&&(pixel_x[9:4]<=26)&&(cursor_location==2)) 
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=28)&&(pixel_x[9:4]<=29)&&(cursor_location==1))
+			else if ((~font_bit)&&(config_mode == 3)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=28)&&(pixel_x[9:4]<=29)&&(cursor_location==1))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((~font_bit)&&(config_mode)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=31)&&(pixel_x[9:4]<=32)&&(cursor_location==0))
+			else if ((~font_bit)&&(config_mode == 3)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=31)&&(pixel_x[9:4]<=32)&&(cursor_location==0))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
 			else if(~font_bit) text_RGB = 12'h0AA;//Fondo del texto igual al de los recuadros
 		end

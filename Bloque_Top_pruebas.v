@@ -33,7 +33,7 @@ digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T;
 
 wire AM_PM;
 wire [2:0] dia_semana;
-wire funcion;
+wire [1:0]funcion;
 wire [1:0] cursor_location;
 
 bloque_prueba_frames Instancia_bloque_prueba_frames

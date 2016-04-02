@@ -26,7 +26,7 @@ digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 output reg AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 output reg [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-output reg funcion,//2-bits: cuatro estados del modo configuración
+output reg [1:0]funcion,//2-bits: cuatro estados del modo configuración
 output reg [1:0] cursor_location//Marca la posición del cursor en modo configuración
 );
 
@@ -63,7 +63,7 @@ digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b0;
 dia_semana = 3'b000;
-funcion = 1'b0;
+funcion = 2'b00;
 cursor_location = 2'b00;
 end
 
@@ -92,7 +92,7 @@ digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b1;
 dia_semana = 3'b001;
-funcion = 1'b1;
+funcion = 2'b01;
 cursor_location = 2'b10;
 end
 
@@ -121,7 +121,7 @@ digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b0;
 dia_semana = 3'b010;
-funcion = 1'b1;
+funcion = 2'b01;
 cursor_location = 2'b01;
 end
 
@@ -150,7 +150,7 @@ digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b1;
 dia_semana = 3'b011;
-funcion = 1'b1;
+funcion = 2'b10;
 cursor_location = 2'b10;
 end
 
@@ -179,7 +179,7 @@ digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b0;
 dia_semana = 3'b100;
-funcion = 1'b1;
+funcion = 2'b10;
 cursor_location = 2'b00;
 end
 
@@ -208,11 +208,11 @@ digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b1;
 dia_semana = 3'b101;
-funcion = 1'b1;
+funcion = 2'b11;
 cursor_location = 2'b01;
 end
 
-3'h6://Escribe 0's, cursor on (config. hora: cambia SS, escribe AM, escribe Domingo
+3'h6://Escribe 0's, cursor on (config. TIMER: cambia SS, escribe AM, escribe Domingo
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -237,7 +237,7 @@ digit1_SS_T = 4'b0110;
 
 AM_PM = 1'b0;
 dia_semana = 3'b110;
-funcion = 1'b1;
+funcion = 2'b11;
 cursor_location = 2'b00;
 end
 
@@ -266,7 +266,7 @@ digit1_SS_T = 4'b1001;
 
 AM_PM = 1'b1;
 dia_semana = 3'b000;
-funcion = 1'b0;
+funcion = 2'b00;
 cursor_location = 2'b00;
 end
 endcase
