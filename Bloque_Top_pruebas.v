@@ -35,6 +35,8 @@ wire AM_PM;
 wire [2:0] dia_semana;
 wire [1:0]funcion;
 wire [1:0] cursor_location;
+wire timer_end;//bandera proveniente del RTC que indica la finalización del tiempo del timer
+wire formato_hora;//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
 
 bloque_prueba_frames Instancia_bloque_prueba_frames
 (
@@ -45,7 +47,9 @@ bloque_prueba_frames Instancia_bloque_prueba_frames
 .AM_PM(AM_PM),//Entrada para conocer si en la información de hora se despliega AM o PM
 .dia_semana(dia_semana),//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 .funcion(funcion),//2-bits: cuatro estados del modo configuración
-.cursor_location(cursor_location)//Marca la posición del cursor en modo configuración
+.cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
+.timer_end(timer_end),//bandera proveniente del RTC que indica la finalización del tiempo del timer
+.formato_hora(formato_hora)//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
 );
 
 Clock_screen_top Instancia_Clock_screen_top
@@ -58,6 +62,8 @@ Clock_screen_top Instancia_Clock_screen_top
 .dia_semana(dia_semana),//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 .config_mode(funcion),//1-bit: OR de los tres estados del modo configuración
 .cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
+.timer_end(timer_end),//bandera proveniente del RTC que indica la finalización del tiempo del timer
+.formato_hora(formato_hora),//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
 .hsync(hsync),.vsync(vsync),
 .RGB(RGB)
 );

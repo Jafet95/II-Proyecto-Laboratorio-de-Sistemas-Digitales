@@ -26,10 +26,11 @@ digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-input wire [1:0]config_mode,//Cuatro estados del modo configuración
+input wire [1:0] config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
 input wire [9:0] pixel_x, pixel_y,//Coordenada de cada pixel
 output wire text_on, //10 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
+output wire  RING_on, AMPM_on, //Localización de esos respectivos textos
 output reg [11:0] text_RGB //12 bpp (4 bits para cada color)
 );
 
@@ -47,7 +48,7 @@ wire font_bit;//1 pixel del font_word específicado por bit_addr
 reg [6:0] char_addr_HORA, char_addr_digHORA, char_addr_digFECHA, char_addr_DIA, char_addr_TIMER, char_addr_digTIMER, char_addr_RING, char_addr_AMPM, char_addr_LOGO, char_addr_cursor;
 wire [3:0] row_addr_HORA, row_addr_digHORA, row_addr_digFECHA, row_addr_DIA, row_addr_TIMER,row_addr_digTIMER, row_addr_RING, row_addr_AMPM, row_addr_LOGO, row_addr_cursor;
 wire [2:0] bit_addr_HORA, bit_addr_digHORA, bit_addr_digFECHA, bit_addr_DIA, bit_addr_TIMER, bit_addr_digTIMER, bit_addr_RING, bit_addr_AMPM, bit_addr_LOGO, bit_addr_cursor; 
-wire HORA_on, digHORA_on, digFECHA_on, DIA_on, TIMER_on, digTIMER_on, RING_on, AMPM_on, LOGO_on;
+wire HORA_on, digHORA_on, digFECHA_on, DIA_on, TIMER_on, digTIMER_on, LOGO_on;
 //reg cursor_on;
 	
 //Instanciación de la font ROM
@@ -118,7 +119,7 @@ assign DIA_on = (pixel_y[9:5]==10)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=15);
 assign row_addr_DIA = pixel_y[4:1];
 assign bit_addr_DIA = pixel_x[3:1];
 
-//El día de la semana se interpreta con un número de 3 bits del 0 al 6 (7 días)
+//El día de la semana se interpreta con un número de 3 bits del 1 al 7 (7 días)
 always@*
 begin
 	case(pixel_x[7:4])
@@ -126,14 +127,13 @@ begin
 	4'h7: //Primera letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h4c;//L
-	3'b001: char_addr_DIA = 7'h4d;//M
+	3'b001: char_addr_DIA = 7'h4c;//L
 	3'b010: char_addr_DIA = 7'h4d;//M
-	3'b011: char_addr_DIA = 7'h4a;//J
-	3'b100: char_addr_DIA = 7'h56;//V
-	3'b101: char_addr_DIA = 7'h53;//S
-	3'b110: char_addr_DIA = 7'h44;//D
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b011: char_addr_DIA = 7'h4d;//M
+	3'b100: char_addr_DIA = 7'h4a;//J
+	3'b101: char_addr_DIA = 7'h56;//V
+	3'b110: char_addr_DIA = 7'h53;//S
+	3'b111: char_addr_DIA = 7'h44;//D
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -141,14 +141,13 @@ begin
 	4'h8: //Segunda letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h55;//U
-	3'b001: char_addr_DIA = 7'h41;//A
-	3'b010: char_addr_DIA = 7'h49;//I
-	3'b011: char_addr_DIA = 7'h55;//U
-	3'b100: char_addr_DIA = 7'h49;//I
-	3'b101: char_addr_DIA = 7'h41;//A
-	3'b110: char_addr_DIA = 7'h4f;//O
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b001: char_addr_DIA = 7'h55;//U
+	3'b010: char_addr_DIA = 7'h41;//A
+	3'b011: char_addr_DIA = 7'h49;//I
+	3'b100: char_addr_DIA = 7'h55;//U
+	3'b101: char_addr_DIA = 7'h49;//I
+	3'b110: char_addr_DIA = 7'h41;//A
+	3'b111: char_addr_DIA = 7'h4f;//O
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -156,14 +155,13 @@ begin
 	4'h9: //Tercera letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h4e;//N
-	3'b001: char_addr_DIA = 7'h52;//R
-	3'b010: char_addr_DIA = 7'h45;//E
+	3'b001: char_addr_DIA = 7'h4e;//N
+	3'b010: char_addr_DIA = 7'h52;//R
 	3'b011: char_addr_DIA = 7'h45;//E
 	3'b100: char_addr_DIA = 7'h45;//E
-	3'b101: char_addr_DIA = 7'h42;//B
-	3'b110: char_addr_DIA = 7'h4d;//M
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b101: char_addr_DIA = 7'h45;//E
+	3'b110: char_addr_DIA = 7'h42;//B
+	3'b111: char_addr_DIA = 7'h4d;//M
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -171,14 +169,13 @@ begin
 	4'ha: //Cuarta letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h45;//E
-	3'b001: char_addr_DIA = 7'h54;//T
-	3'b010: char_addr_DIA = 7'h52;//R
-	3'b011: char_addr_DIA = 7'h56;//V
-	3'b100: char_addr_DIA = 7'h52;//R
-	3'b101: char_addr_DIA = 7'h41;//A
-	3'b110: char_addr_DIA = 7'h49;//I
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b001: char_addr_DIA = 7'h45;//E
+	3'b010: char_addr_DIA = 7'h54;//T
+	3'b011: char_addr_DIA = 7'h52;//R
+	3'b100: char_addr_DIA = 7'h56;//V
+	3'b101: char_addr_DIA = 7'h52;//R
+	3'b110: char_addr_DIA = 7'h41;//A
+	3'b111: char_addr_DIA = 7'h49;//I
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -186,14 +183,13 @@ begin
 	4'hb: //Quinta letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h53;//S
-	3'b001: char_addr_DIA = 7'h45;//E
-	3'b010: char_addr_DIA = 7'h43;//C
-	3'b011: char_addr_DIA = 7'h45;//E
-	3'b100: char_addr_DIA = 7'h4e;//N
-	3'b101: char_addr_DIA = 7'h44;//D
-	3'b110: char_addr_DIA = 7'h4e;//N
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b001: char_addr_DIA = 7'h53;//S
+	3'b010: char_addr_DIA = 7'h45;//E
+	3'b011: char_addr_DIA = 7'h43;//C
+	3'b100: char_addr_DIA = 7'h45;//E
+	3'b101: char_addr_DIA = 7'h4e;//N
+	3'b110: char_addr_DIA = 7'h44;//D
+	3'b111: char_addr_DIA = 7'h4e;//N
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -201,14 +197,12 @@ begin
 	4'hc: //Sexta letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h00;//Espacio en blanco
-	3'b001: char_addr_DIA = 7'h53;//S
-	3'b010: char_addr_DIA = 7'h4f;//O
-	3'b011: char_addr_DIA = 7'h53;//S
-	3'b100: char_addr_DIA = 7'h45;//E
-	3'b101: char_addr_DIA = 7'h4f;//O
-	3'b110: char_addr_DIA = 7'h47;//G
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b010: char_addr_DIA = 7'h53;//S
+	3'b011: char_addr_DIA = 7'h4f;//O
+	3'b100: char_addr_DIA = 7'h53;//S
+	3'b101: char_addr_DIA = 7'h45;//E
+	3'b110: char_addr_DIA = 7'h4f;//O
+	3'b111: char_addr_DIA = 7'h47;//G
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -216,14 +210,9 @@ begin
 	4'hd: //Séptima letra
 	begin
 	case(dia_semana)
-	3'b000: char_addr_DIA = 7'h00;//Espacio en blanco
-	3'b001: char_addr_DIA = 7'h00;//Espacio en blanco
-	3'b010: char_addr_DIA = 7'h4c;//L
-	3'b011: char_addr_DIA = 7'h00;//Espacio en blanco
-	3'b100: char_addr_DIA = 7'h53;//S
-	3'b101: char_addr_DIA = 7'h00;//Espacio en blanco
-	3'b110: char_addr_DIA = 7'h4f;//O
-	3'b111: char_addr_DIA = 7'h00;//Espacio en blanco
+	3'b011: char_addr_DIA = 7'h4c;//L
+	3'b101: char_addr_DIA = 7'h53;//S
+	3'b111: char_addr_DIA = 7'h4f;//O
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -231,7 +220,7 @@ begin
 	4'he: //Octava letra
 	begin
 	case(dia_semana)
-	3'b010: char_addr_DIA = 7'h45;//E
+	3'b011: char_addr_DIA = 7'h45;//E
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -239,7 +228,7 @@ begin
 	4'hf: //Novena letra
 	begin
 	case(dia_semana)
-	3'b010: char_addr_DIA = 7'h53;//M
+	3'b011: char_addr_DIA = 7'h53;//S
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -349,59 +338,6 @@ begin
 	endcase	
 end
 
-//10.Flecha cursor(tamaño de fuente 16x32)(posición variable)
-
-
-/*always@*
-begin
-	case(funcion)//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 3: config.timer)
-	
-	2'h0: 
-	begin
-	char_addr_cursor = 7'h00;//Espacio en blanco
-	cursor_on = 0;
-	end
-	
-	2'h1://Hora
-	begin
-	char_addr_cursor = 7'h1e;//flecha hacia arriba
-	case(cursor_location)//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
-	2'h0: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=25)&&(pixel_x[9:4]<=28);//4 flechas
-	2'h1: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=19)&&(pixel_x[9:4]<=22);
-	2'h2: cursor_on = (pixel_y[9:5]==6)&&(pixel_x[9:4]<=15)&&(pixel_x[9:4]<=18);
-	default: cursor_on = 0;
-	endcase
-	end
-	
-	2'h2://Fecha
-	begin
-	char_addr_cursor = 7'h1e;//flecha hacia arriba
-	case(cursor_location)//(0: primeros dos dígitos a la derecha, 1: dos dígitos intermedios, 2: últimos dos dígitos a la izquierda)
-	2'h0: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=14)&&(pixel_x[9:4]<=15);//2 flechas
-	2'h1: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=11)&&(pixel_x[9:4]<=12);
-	2'h2: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=8)&&(pixel_x[9:4]<=9);
-	default: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=14)&&(pixel_x[9:4]<=15);
-	endcase
-	end
-	
-	2'h3://Timer
-	begin
-	char_addr_cursor = 7'h1e;//flecha hacia arriba
-	case(cursor_location)//(0: primeros dos dígitos a la derecha, 1: dos dígitos intermedios, 2: últimos dos dígitos a la izquierda)
-	2'h0: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=32)&&(pixel_x[9:4]<=33);//2 flechas
-	2'h1: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=29)&&(pixel_x[9:4]<=30);
-	2'h2: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=26)&&(pixel_x[9:4]<=27);
-	default: cursor_on = (pixel_y[9:5]==13)&&(pixel_x[9:4]<=13)&&(pixel_x[9:4]<=16);
-	endcase
-	end
-	
-	endcase
-end
-
-assign row_addr_cursor = pixel_y[4:1];
-assign bit_addr_cursor = pixel_x[3:1];
-*/
-
 //Multiplexar las direcciones para font ROM y salida RBG
 always @*
 begin
@@ -421,7 +357,7 @@ text_RGB = 12'b0;//Fondo negro
 		char_addr = char_addr_digHORA;
       row_addr = row_addr_digHORA;
       bit_addr = bit_addr_digHORA;
-			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
+			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda, 3: Ubicación de AM/PM)
 			//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 3: config.timer)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
 			else if ((~font_bit)&&(config_mode == 1)&&(pixel_y[9:6]==2)&&(pixel_x[9:5]>=6)&&(pixel_x[9:5]<=7)&&(cursor_location==2)) 
@@ -438,9 +374,9 @@ text_RGB = 12'b0;//Fondo negro
 		char_addr = char_addr_digFECHA;
       row_addr = row_addr_digFECHA;
       bit_addr = bit_addr_digFECHA;
-			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
+			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda, 3: Ubicación de día semana)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=8)&&(cursor_location == 2)) 
+			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=8)&&(cursor_location==2))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
 			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=10)&&(pixel_x[9:4]<=11)&&(cursor_location==1))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
@@ -455,6 +391,9 @@ text_RGB = 12'b0;//Fondo negro
       row_addr = row_addr_DIA;
       bit_addr = bit_addr_DIA;
 			if(font_bit) text_RGB = 12'h2F2; //Verde
+			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==10)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=15)&&(cursor_location==3)) 
+			text_RGB = 12'hAAA;//Hace un cursor si se está en modo configuración (gris)
+			else if(~font_bit) text_RGB = 12'h0;//Fondo del texto igual al background
 		end
 		
 	else if(TIMER_on)
@@ -494,7 +433,11 @@ text_RGB = 12'b0;//Fondo negro
 		char_addr = char_addr_AMPM;
       row_addr = row_addr_AMPM;
       bit_addr = bit_addr_AMPM;
+		//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda, 3: Ubicación de AM/PM)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
+			else if ((~font_bit)&&(config_mode == 1)&&(pixel_y[9:5]==1)&&(pixel_x[9:4]>=26)&&(pixel_x[9:4]<=27)&&(cursor_location==3)) 
+			text_RGB = 12'hAAA;//Hace un cursor si se está en modo configuración (gris)
+			else if(~font_bit) text_RGB = 12'h0;//Fondo del texto igual al background
 		end
 
 	else
@@ -504,19 +447,10 @@ text_RGB = 12'b0;//Fondo negro
       bit_addr = bit_addr_LOGO;
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
 		end
-	
-/*	else
-		begin 
-		char_addr = char_addr_cursor;
-      row_addr = row_addr_cursor;
-      bit_addr = bit_addr_cursor;
-			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else text_RGB = 12'h0AA;//Fondo del texto igual al de los recuadros
-		end	
-*/
+		
 end
 
-assign text_on = HORA_on|digHORA_on|digFECHA_on|DIA_on|TIMER_on|digTIMER_on|RING_on|AMPM_on|LOGO_on;//10 bloques de texto en total
+assign text_on = HORA_on|digHORA_on|digFECHA_on|DIA_on|TIMER_on|digTIMER_on|LOGO_on;//10 bloques de texto en total
 
 //Interfaz con la font ROM
 assign rom_addr = {char_addr, row_addr};
@@ -534,5 +468,4 @@ Nota: Los 10 textos a mostrar son
 7.La palabra RING
 8.AM o PM
 9.RTC DISPLAY v1.0
-10.Una flecha que hace de cursor para el modo configuración (posición variable)
 */

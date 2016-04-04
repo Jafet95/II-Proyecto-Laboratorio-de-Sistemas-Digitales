@@ -24,6 +24,7 @@ module generador_figuras
 input wire video_on,//señal que indica que se encuentra en la región visible de resolución 640x480
 input wire [9:0] pixel_x, pixel_y,//coordenadas xy de cada pixel
 output wire graph_on,
+output wire BOX_RING_on,
 output reg [11:0] fig_RGB //12 bpp (4 bits para cada color)
 );
 
@@ -58,7 +59,7 @@ localparam BOX_RING_YT = 64;// Límite superior
 localparam BOX_RING_YB = 111;//Límite inferior
 
 //Señales de salida de los objetos
-wire BOX_H_on, BOX_F_on, BOX_T_on, BOX_RING_on;
+wire BOX_H_on, BOX_F_on, BOX_T_on;
 wire [11:0] BOX_H_RGB, BOX_F_RGB, BOX_T_RGB, BOX_RING_RGB;
 
 /*Para rellenar con píxeles dentro de los límites 
@@ -102,6 +103,6 @@ begin
 		else fig_RGB = 12'b0;//fondo negro
 end
 
-assign graph_on = BOX_H_on | BOX_F_on | BOX_T_on | BOX_RING_on;
+assign graph_on = BOX_H_on | BOX_F_on | BOX_T_on;
 	
 endmodule

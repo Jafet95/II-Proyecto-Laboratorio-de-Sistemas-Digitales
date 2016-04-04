@@ -28,6 +28,8 @@ input wire AM_PM,//Entrada para conocer si en la información de hora se desplieg
 input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 input wire [1:0]config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
+input wire timer_end,//bandera proveniente del RTC que indica la finalización del tiempo del timer
+input wire formato_hora,//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
 output wire hsync,vsync,
 output wire [11:0] RGB
 //output wire pixel_tick
@@ -39,6 +41,8 @@ wire pixel_tick;
 reg [11:0] RGB_reg, RGB_next;
 wire text_on, graph_on;
 wire [11:0] fig_RGB, text_RGB;
+wire BOX_RING_on;
+wire RING_on, AMPM_on;
 
 //Instanciaciones
 
@@ -60,6 +64,7 @@ generador_figuras Instancia_generador_figuras
 .pixel_x(pixel_x), 
 .pixel_y(pixel_y),//coordenadas xy de cada pixel
 .graph_on(graph_on),
+.BOX_RING_on(BOX_RING_on),//Señal que indica la localización del recuadro de RING
 .fig_RGB(fig_RGB) //12 bpp (4 bits para cada color)
 );
 
@@ -75,6 +80,7 @@ generador_caracteres Instancia_generador_caracteres
 .cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
 .pixel_x(pixel_x), .pixel_y(pixel_y),
 .text_on(text_on), //7 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
+.RING_on(RING_on), .AMPM_on(AMPM_on), //Localización de esos respectivos textos
 .text_RGB(text_RGB) //12 bpp (4 bits para cada color)
 );
 
@@ -92,7 +98,10 @@ begin
 	
 	else
 		if(text_on) RGB_next = text_RGB;
+		else if (AMPM_on && formato_hora) RGB_next = text_RGB;
 		else if(graph_on) RGB_next = fig_RGB;
+		else if (BOX_RING_on && timer_end) RGB_next = fig_RGB;
+		else if (RING_on && timer_end) RGB_next = text_RGB;
 		else RGB_next = 12'h000;//Fondo negro
 end
 

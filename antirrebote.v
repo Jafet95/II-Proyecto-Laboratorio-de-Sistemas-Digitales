@@ -42,6 +42,7 @@ reg [N-1:0] q_reg;
 reg [N-1:0] q_next;
 wire m_tick;
 reg [1:0] state_reg, state_next;
+reg reset_count;
 
 
 //Descripción del comportamiento
@@ -49,9 +50,9 @@ reg [1:0] state_reg, state_next;
 //=============================================
 // Contador para generar un pulso de(2^N)*10ns
 //=============================================
-always @(posedge clk, posedge reset)
+always @(posedge clk, posedge reset_count)
 begin
-    if (reset) q_reg <= 0;
+    if (reset_count) q_reg <= 0;
 	 else q_reg <= q_next;
 end
 always@*
@@ -59,7 +60,7 @@ begin
 q_next = q_reg + 1'b1;
 end
 // Pulso de salida
-assign m_tick = (q_reg == 0) ? 1'b1 : 1'b0;//Tiempo que se espera para asegurar el dato de entrada
+assign m_tick = (q_reg == 16777215) ? 1'b1 : 1'b0;//Tiempo que se espera para asegurar el dato de entrada
 
 //=============================================
 // FSM antirrebote
@@ -82,14 +83,24 @@ always @*
 	
 	zero:
 	begin
+	reset_count = 1'b1;
+	db = 1'b0;
 		if(sw)
 		begin
 		state_next = wait_one;
+		end
+
+		else
+		begin
+		state_next = zero;
+
 		end
 	end
 		
 	wait_one:
 	begin
+	reset_count = 1'b0;
+	db = 1'b0;
 		if(m_tick)
 		begin
 		state_next = one;
@@ -103,15 +114,25 @@ always @*
 	
 	one:
 	begin
+	reset_count = 1'b1;
 	db = 1'b1;
 		if(~sw)
 		begin
 		state_next = wait_zero;
+
+		end
+		
+		else
+		begin
+
+		state_next = one;
 		end
 	end
 	
 	wait_zero:
 	begin
+	reset_count = 1'b0;
+		db = 1'b1;
 		if(m_tick)
 		begin
 		state_next = zero;
@@ -119,7 +140,7 @@ always @*
 		
 		else
 		begin
-		state_next = wait_one;
+		state_next = wait_zero;
 		end
 	end	
 	

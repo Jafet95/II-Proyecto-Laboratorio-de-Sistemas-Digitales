@@ -27,7 +27,9 @@ digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//D
 output reg AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 output reg [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 output reg [1:0]funcion,//2-bits: cuatro estados del modo configuración
-output reg [1:0] cursor_location//Marca la posición del cursor en modo configuración
+output reg [1:0] cursor_location,//Marca la posición del cursor en modo configuración
+output reg timer_end,//bandera proveniente del RTC que indica la finalización del tiempo del timer
+output reg formato_hora//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
 );
 
 
@@ -38,7 +40,7 @@ begin
 
 case(sw)
 
-3'h0://Escribe 0's, cursor off (modo normal), escribe AM, escribe Lunes
+3'h0://Escribe 0's, cursor off (modo normal), escribe AM, escribe Lunes, emula finalización de TIMER
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -62,12 +64,14 @@ digit0_SS_T = 4'b0000;
 digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b0;
-dia_semana = 3'b000;
+dia_semana = 3'b001;
 funcion = 2'b00;
 cursor_location = 2'b00;
+timer_end = 1'b1;
+formato_hora = 1'b1;
 end
 
-3'h1://Escribe 0's, cursor on (config. hora: cambia HH, escribe PM, escribe Martes
+3'h1://Escribe 0's, cursor on (config. hora: cambia HH, escribe PM, escribe Martes)
 begin
 digit0_HH = 4'b0101;
 digit1_HH = 4'b0001;
@@ -91,12 +95,14 @@ digit0_SS_T = 4'b0000;
 digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b1;
-dia_semana = 3'b001;
+dia_semana = 3'b010;
 funcion = 2'b01;
 cursor_location = 2'b10;
+timer_end = 1'b0;
+formato_hora = 1'b1;
 end
 
-3'h2://Escribe 0's, cursor on (config. hora: cambia MM, escribe AM, escribe Miércoles
+3'h2://Escribe 0's, cursor on (config. hora: cambia AM/PM, escribe AM, escribe Miércoles)
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -120,12 +126,14 @@ digit0_SS_T = 4'b0000;
 digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b0;
-dia_semana = 3'b010;
+dia_semana = 3'b011;
 funcion = 2'b01;
-cursor_location = 2'b01;
+cursor_location = 2'b11;
+timer_end = 1'b0;
+formato_hora = 1'b1;
 end
 
-3'h3://Escribe 0's, cursor on (config. fecha: cambia Día, escribe PM, escribe Jueves
+3'h3://Escribe 0's, cursor on (config. fecha: cambia Día, escribe PM, escribe Jueves)
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -134,7 +142,7 @@ digit1_MM = 4'b0000;
 digit0_SS = 4'b0000;
 digit1_SS = 4'b0000;//
 
-digit0_DAY = 4'b0000;
+digit0_DAY = 4'b0001;
 digit1_DAY = 4'b0011;
 digit0_MES = 4'b0000;
 digit1_MES = 4'b0000;
@@ -149,12 +157,14 @@ digit0_SS_T = 4'b0000;
 digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b1;
-dia_semana = 3'b011;
+dia_semana = 3'b100;
 funcion = 2'b10;
 cursor_location = 2'b10;
+timer_end = 1'b0;
+formato_hora = 1'b1;
 end
 
-3'h4://Escribe 0's, cursor on (config. fecha: cambia año, escribe AM, escribe Viernes
+3'h4://Escribe 0's, cursor on (config. fecha: día de la semana(cursor),escribe año 99, formato 24 hrs , escribe Viernes)
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -178,12 +188,14 @@ digit0_SS_T = 4'b0000;
 digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b0;
-dia_semana = 3'b100;
+dia_semana = 3'b101;
 funcion = 2'b10;
-cursor_location = 2'b00;
+cursor_location = 2'b11;
+timer_end = 1'b0;
+formato_hora = 1'b0;
 end
 
-3'h5://Escribe 0's, cursor on (config. timer: cambia MM, escribe PM, escribe Sábado
+3'h5://Escribe 0's, cursor on (config. timer: cambia MM, formato 24 hrs, escribe Sábado)
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -207,12 +219,14 @@ digit0_SS_T = 4'b0000;
 digit1_SS_T = 4'b0000;
 
 AM_PM = 1'b1;
-dia_semana = 3'b101;
+dia_semana = 3'b110;
 funcion = 2'b11;
 cursor_location = 2'b01;
+timer_end = 1'b0;
+formato_hora = 1'b0;
 end
 
-3'h6://Escribe 0's, cursor on (config. TIMER: cambia SS, escribe AM, escribe Domingo
+3'h6://Escribe 0's, cursor on (config. TIMER: cambia SS, formato 24 hrs, escribe Domingo)
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;
@@ -233,15 +247,17 @@ digit1_HH_T = 4'b0000;
 digit0_MM_T = 4'b0000;
 digit1_MM_T = 4'b0000;
 digit0_SS_T = 4'b0011;
-digit1_SS_T = 4'b0110;
+digit1_SS_T = 4'b0100;
 
 AM_PM = 1'b0;
-dia_semana = 3'b110;
+dia_semana = 3'b111;
 funcion = 2'b11;
 cursor_location = 2'b00;
+timer_end = 1'b0;
+formato_hora = 1'b0;
 end
 
-3'h7://Escribe en todos los dígitos, cursor off (modo normal), escribe PM, escribe Lunes
+3'h7://Escribe en todos los dígitos, cursor off (modo normal), formato 24 hrs, escribe Lunes
 begin
 digit0_HH = 4'b0101;
 digit1_HH = 4'b0001;
@@ -265,9 +281,11 @@ digit0_SS_T = 4'b0101;
 digit1_SS_T = 4'b1001;
 
 AM_PM = 1'b1;
-dia_semana = 3'b000;
+dia_semana = 3'b001;
 funcion = 2'b00;
 cursor_location = 2'b00;
+timer_end = 1'b0;
+formato_hora = 1'b0;
 end
 endcase
 end
