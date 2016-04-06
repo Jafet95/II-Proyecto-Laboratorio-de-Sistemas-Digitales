@@ -84,6 +84,32 @@ generador_caracteres Instancia_generador_caracteres
 .text_RGB(text_RGB) //12 bpp (4 bits para cada color)
 );
 
+//=============================================
+// Contador para generar pulso de parpadeo
+//=============================================
+// Bits del contador para generar una señal periódica de (2^N)*10ns
+localparam N =24;//~3Hz
+
+reg [N-1:0] blink_reg;
+reg blink;
+
+always @(posedge clock, posedge reset)
+begin
+	if (reset)begin blink_reg <= 0; blink <= 0; end
+	
+	else
+	begin
+		if (blink_reg == 24'd16666666)
+			begin
+			blink_reg <= 0;
+			blink <= ~blink;
+			end
+		else
+			blink_reg <= blink_reg + 1'b1;
+	end
+end	
+//____________________________________________________________________________________________________________
+
 //Multiplexión entre texto o figuras
 
 /*Cuando haya que controlar la aparición
@@ -100,8 +126,8 @@ begin
 		if(text_on) RGB_next = text_RGB;
 		else if (AMPM_on && formato_hora) RGB_next = text_RGB;
 		else if(graph_on) RGB_next = fig_RGB;
-		else if (BOX_RING_on && timer_end) RGB_next = fig_RGB;
-		else if (RING_on && timer_end) RGB_next = text_RGB;
+		else if (BOX_RING_on && timer_end && blink) RGB_next = fig_RGB;
+		else if (RING_on && timer_end && blink) RGB_next = text_RGB;
 		else RGB_next = 12'h000;//Fondo negro
 end
 

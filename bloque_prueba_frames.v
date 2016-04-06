@@ -102,7 +102,7 @@ timer_end = 1'b0;
 formato_hora = 1'b1;
 end
 
-3'h2://Escribe 0's, cursor on (config. hora: cambia AM/PM, escribe AM, escribe Miércoles)
+3'h2://Escribe 0's, cursor on (config. hora: cambia MM, escribe AM, escribe Miércoles)
 begin
 digit0_HH = 4'b0000;
 digit1_HH = 4'b0000;

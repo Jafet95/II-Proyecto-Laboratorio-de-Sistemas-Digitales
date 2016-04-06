@@ -392,7 +392,7 @@ text_RGB = 12'b0;//Fondo negro
       bit_addr = bit_addr_DIA;
 			if(font_bit) text_RGB = 12'h2F2; //Verde
 			else if ((~font_bit)&&(config_mode == 2)&&(pixel_y[9:5]==10)&&(pixel_x[9:4]>=7)&&(pixel_x[9:4]<=15)&&(cursor_location==3)) 
-			text_RGB = 12'hAAA;//Hace un cursor si se está en modo configuración (gris)
+			text_RGB = 12'hFFF;//Hace un cursor si se está en modo configuración (blanco)
 			else if(~font_bit) text_RGB = 12'h0;//Fondo del texto igual al background
 		end
 		
@@ -434,10 +434,7 @@ text_RGB = 12'b0;//Fondo negro
       row_addr = row_addr_AMPM;
       bit_addr = bit_addr_AMPM;
 		//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda, 3: Ubicación de AM/PM)
-			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else if ((~font_bit)&&(config_mode == 1)&&(pixel_y[9:5]==1)&&(pixel_x[9:4]>=26)&&(pixel_x[9:4]<=27)&&(cursor_location==3)) 
-			text_RGB = 12'hAAA;//Hace un cursor si se está en modo configuración (gris)
-			else if(~font_bit) text_RGB = 12'h0;//Fondo del texto igual al background
+			if(font_bit) text_RGB = 12'h2F2; //Verde
 		end
 
 	else

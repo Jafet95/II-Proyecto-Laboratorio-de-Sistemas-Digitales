@@ -22,9 +22,10 @@ module contador_AD_DAY_2dig
 (
 input wire clk,
 input wire reset,
+input wire [3:0] en_count,
 input wire enUP,
 input wire enDOWN,
-output reg [3:0] digit0, digit1//Decodifica en binario el valor en dos dígitos decimales
+output reg [3:0] digit1, digit0
 );
 
 localparam N = 5; // Para definir el número de bits del contador (hasta 31->5 bits)
@@ -32,7 +33,7 @@ localparam N = 5; // Para definir el número de bits del contador (hasta 31->5 bi
 reg [N-1:0] q_act, q_next;
 reg enUP_reg, enDOWN_reg;
 wire enUP_tick, enDOWN_tick;
-wire [N-1:0] count_data;//Se debe sumar 1 por como se interpretan los días (del 1 a 31)
+wire [N-1:0] count_data;
 
 //Detección de flancos
 always@(posedge clk)
@@ -63,22 +64,22 @@ end
 //Lógica de salida
 always@*
 begin
-	if(enUP_tick)
+	if(enUP_tick && en_count == 6 && en_count == 6)
 	begin
 	q_next = q_act + 1'b1;
 	end
 	
-	else if(enDOWN_tick)
+	else if(enDOWN_tick && en_count == 6)
 	begin
 	q_next = q_act - 1'b1;
 	end
 	
-	else if(~enUP_tick && q_act == 30)
+	else if(~enUP_tick && en_count == 6 && q_act == 30)
 	begin
 	q_next = 5'd0;
 	end
 	
-	else if(~enDOWN_tick && q_act == 0)
+	else if(~enDOWN_tick && en_count == 6 && q_act == 0)
 	begin
 	q_next = 5'd30;
 	end
@@ -91,7 +92,7 @@ end
 
 assign count_data = q_act + 1'b1;//Suma 1 a todas las cuentas de 0->30 a 1->31
 
-//Decodificación BCD (2 dígitos)
+//Decodificaci?n BCD (2 d?gitos)
 
 always@*
 begin
@@ -137,3 +138,6 @@ endcase
 end
 
 endmodule
+
+
+

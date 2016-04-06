@@ -22,9 +22,10 @@ module contador_AD_MM_T_2dig
 (
 input wire clk,
 input wire reset,
+input wire [3:0] en_count,
 input wire enUP,
 input wire enDOWN,
-output reg [3:0] digit0, digit1//Decodifica en binario el valor en dos dígitos decimales
+output reg [3:0] digit1, digit0
 );
 
 localparam N = 6; // Para definir el número de bits del contador (hasta 59->6 bits)
@@ -63,22 +64,22 @@ end
 //Lógica de salida
 always@*
 begin
-	if(enUP_tick)
+	if(enUP_tick && en_count == 9)
 	begin
 	q_next = q_act + 1'b1;
 	end
 	
-	else if(enDOWN_tick)
+	else if(enDOWN_tick && en_count == 9)
 	begin
 	q_next = q_act - 1'b1;
 	end
 	
-	else if(~enUP_tick && q_act == 59)
+	else if(~enUP_tick && q_act == 59 && en_count == 9)
 	begin
 	q_next = 6'd0;
 	end
 	
-	else if(~enDOWN_tick && q_act == 0)
+	else if(~enDOWN_tick && q_act == 0 && en_count == 9)
 	begin
 	q_next = 6'd59;
 	end

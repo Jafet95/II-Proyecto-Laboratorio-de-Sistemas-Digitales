@@ -22,9 +22,10 @@ module contador_AD_dia_semana
 (
 input wire clk,
 input wire reset,
+input wire [3:0]en_count,
 input wire enUP,
 input wire enDOWN,
-output wire [2:0] dia_semana//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
+output wire [7:0] count_data//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 );
 
 localparam N = 3; // Para definir el número de bits del contador (hasta 7->3 bits)
@@ -62,22 +63,22 @@ end
 //Lógica de salida
 always@*
 begin
-	if(enUP_tick)
+	if(enUP_tick && en_count == 7)
 	begin
 	q_next = q_act + 1'b1;
 	end
 	
-	else if(enDOWN_tick)
+	else if(enDOWN_tick && en_count == 7)
 	begin
 	q_next = q_act - 1'b1;
 	end
 	
-	else if(~enUP_tick && q_act == 6)
+	else if(~enUP_tick && q_act == 6 && en_count == 7)
 	begin
 	q_next = 3'd0;
 	end
 	
-	else if(~enDOWN_tick && q_act == 0)
+	else if(~enDOWN_tick && q_act == 0 && en_count == 7)
 	begin
 	q_next = 3'd6;
 	end
@@ -88,6 +89,6 @@ begin
 	end
 end
 
-assign dia_semana = q_act + 1'b1;//Suma 1 a todas las cuentas de 0->6 a 1->7
+assign count_data = q_act + 1'b1;//Suma 1 a todas las cuentas de 0->6 a 1->7
 
 endmodule
