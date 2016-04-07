@@ -38,18 +38,33 @@ reg enUP_reg, enDOWN_reg;
 wire enUP_tick, enDOWN_tick;
 wire [N-1:0] count_data;
 
-//Detección de flancos
-always@(posedge clk)
-begin
-enUP_reg <= enUP;
-enDOWN_reg <= enDOWN;
-end
+//=============================================
+// Bits del contador para generar una señal periódica de (2^N)*10ns
+localparam N_bits =24;//~4Hz
 
-assign enUP_tick = ~enUP_reg & enUP;
-assign enDOWN_tick = ~enDOWN_reg & enDOWN;
+reg [N_bits-1:0] btn_pulse_reg;
+reg btn_pulse;
+
+always @(posedge clk, posedge reset)
+begin
+	if (reset)begin btn_pulse_reg <= 0; btn_pulse <= 0; end
+	
+	else
+	begin
+		if (btn_pulse_reg == 24'd12999999)
+			begin
+			btn_pulse_reg <= 0;
+			btn_pulse <= ~btn_pulse;
+			end
+		else
+			btn_pulse_reg <= btn_pulse_reg + 1'b1;
+	end
+end	
+//____________________________________________________________________________________________________________
+
 
 //Descripción del comportamiento
-always@(posedge clk)
+always@(posedge btn_pulse, posedge reset)
 begin	
 	
 	if(reset)
@@ -67,22 +82,22 @@ end
 //Lógica de salida
 always@*
 begin
-	if(enUP_tick && en_count == 3)
+	if(enUP && en_count == 3)
 	begin
 	q_next = q_act + 1'b1;
 	end
 	
-	else if(enDOWN_tick && en_count == 3)
+	else if(enDOWN && en_count == 3)
 	begin
 	q_next = q_act - 1'b1;
 	end
 	
-	else if(~enUP_tick && q_act == 23 && en_count == 3)
+	else if(enUP && q_act == 23 && en_count == 3)
 	begin
 	q_next = 5'd0;
 	end
 	
-	else if(~enDOWN_tick && q_act == 0 && en_count == 3)
+	else if(enDOWN && q_act == 0 && en_count == 3)
 	begin
 	q_next = 5'd23;
 	end
@@ -115,18 +130,18 @@ begin
 		5'd10: begin digit1 = 4'b0001; digit0 = 4'b0000; AM_PM = 0; end//10
 		5'd11: begin digit1 = 4'b0001; digit0 = 4'b0001; AM_PM = 0; end//11
 		
-		5'd12: begin digit1 = 4'b1001; digit0 = 4'b0010; AM_PM = 1; end//PM
-		5'd13: begin digit1 = 4'b1000; digit0 = 4'b0001; AM_PM = 1; end//1
-		5'd14: begin digit1 = 4'b1000; digit0 = 4'b0010; AM_PM = 1; end//2
-		5'd15: begin digit1 = 4'b1000; digit0 = 4'b0011; AM_PM = 1; end//3
-		5'd16: begin digit1 = 4'b1000; digit0 = 4'b0100; AM_PM = 1; end//4
-		5'd17: begin digit1 = 4'b1000; digit0 = 4'b0101; AM_PM = 1; end//5
-		5'd18: begin digit1 = 4'b1000; digit0 = 4'b0110; AM_PM = 1; end//6
-		5'd19: begin digit1 = 4'b1000; digit0 = 4'b0111; AM_PM = 1; end//7
-		5'd20: begin digit1 = 4'b1000; digit0 = 4'b1000; AM_PM = 1; end//8
-		5'd21: begin digit1 = 4'b1000; digit0 = 4'b1001; AM_PM = 1; end//9
-		5'd22: begin digit1 = 4'b1001; digit0 = 4'b0000; AM_PM = 1; end//10
-		5'd23: begin digit1 = 4'b1001; digit0 = 4'b0001; AM_PM = 1; end//11
+		5'd12: begin digit1 = 4'b0001; digit0 = 4'b0010; AM_PM = 1; end//PM
+		5'd13: begin digit1 = 4'b0000; digit0 = 4'b0001; AM_PM = 1; end//1
+		5'd14: begin digit1 = 4'b0000; digit0 = 4'b0010; AM_PM = 1; end//2
+		5'd15: begin digit1 = 4'b0000; digit0 = 4'b0011; AM_PM = 1; end//3
+		5'd16: begin digit1 = 4'b0000; digit0 = 4'b0100; AM_PM = 1; end//4
+		5'd17: begin digit1 = 4'b0000; digit0 = 4'b0101; AM_PM = 1; end//5
+		5'd18: begin digit1 = 4'b0000; digit0 = 4'b0110; AM_PM = 1; end//6
+		5'd19: begin digit1 = 4'b0000; digit0 = 4'b0111; AM_PM = 1; end//7
+		5'd20: begin digit1 = 4'b0000; digit0 = 4'b1000; AM_PM = 1; end//8
+		5'd21: begin digit1 = 4'b0000; digit0 = 4'b1001; AM_PM = 1; end//9
+		5'd22: begin digit1 = 4'b0001; digit0 = 4'b0000; AM_PM = 1; end//10
+		5'd23: begin digit1 = 4'b0001; digit0 = 4'b0001; AM_PM = 1; end//11
 		default:  begin digit1 = 0; digit0 = 0; AM_PM = 0; end
 		endcase
 		end

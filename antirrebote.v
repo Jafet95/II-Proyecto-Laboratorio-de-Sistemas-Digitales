@@ -35,7 +35,7 @@ wait_zero = 2'b11;
 
 
 // Bits del contador para generar una señal periódica de (2^N)*10ns
-localparam N =24;
+localparam N =22;
 
 // Declaración de señales
 reg [N-1:0] q_reg;
@@ -60,7 +60,7 @@ begin
 q_next = q_reg + 1'b1;
 end
 // Pulso de salida
-assign m_tick = (q_reg == 16777215) ? 1'b1 : 1'b0;//Tiempo que se espera para asegurar el dato de entrada
+assign m_tick = (q_reg == 4194303) ? 1'b1 : 1'b0;//Tiempo que se espera para asegurar el dato de entrada
 
 //=============================================
 // FSM antirrebote

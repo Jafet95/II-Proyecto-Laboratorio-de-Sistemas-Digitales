@@ -35,7 +35,7 @@ reg enUP_reg, enDOWN_reg;
 wire enUP_tick, enDOWN_tick;
 wire [N-1:0] count_data;
 
-//Detección de flancos
+/*//Detección de flancos
 always@(posedge clk)
 begin
 enUP_reg <= enUP;
@@ -43,10 +43,35 @@ enDOWN_reg <= enDOWN;
 end
 
 assign enUP_tick = ~enUP_reg & enUP;
-assign enDOWN_tick = ~enDOWN_reg & enDOWN;
+assign enDOWN_tick = ~enDOWN_reg & enDOWN;*/
+
+//=============================================
+// Bits del contador para generar una señal periódica de (2^N)*10ns
+localparam N_bits =24;//~4Hz
+
+reg [N_bits-1:0] btn_pulse_reg;
+reg btn_pulse;
+
+always @(posedge clk, posedge reset)
+begin
+	if (reset)begin btn_pulse_reg <= 0; btn_pulse <= 0; end
+	
+	else
+	begin
+		if (btn_pulse_reg == 24'd12999999)
+			begin
+			btn_pulse_reg <= 0;
+			btn_pulse <= ~btn_pulse;
+			end
+		else
+			btn_pulse_reg <= btn_pulse_reg + 1'b1;
+	end
+end	
+//____________________________________________________________________________________________________________
+
 
 //Descripción del comportamiento
-always@(posedge clk)
+always@(posedge btn_pulse, posedge reset)
 begin	
 	
 	if(reset)
@@ -64,22 +89,22 @@ end
 //Lógica de salida
 always@*
 begin
-	if(enUP_tick && en_count == 1)
+	if(enUP && en_count == 1)
 	begin
 	q_next = q_act + 1'b1;
 	end
 	
-	else if(enDOWN_tick && en_count == 1)
+	else if(enDOWN && en_count == 1)
 	begin
 	q_next = q_act - 1'b1;
 	end
 	
-	else if(~enUP_tick && q_act == 59 && en_count == 1)
+	else if(enUP && (q_act == 59) && (en_count == 1))
 	begin
 	q_next = 6'd0;
 	end
 	
-	else if(~enDOWN_tick && q_act == 0 && en_count == 1)
+	else if(enDOWN && q_act == 0 && en_count == 1)
 	begin
 	q_next = 6'd59;
 	end

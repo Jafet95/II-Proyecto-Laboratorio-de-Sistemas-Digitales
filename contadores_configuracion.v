@@ -83,22 +83,22 @@ begin
 	q_next = q_act - 1'b1;
 	end
 	
-	else if(~enLEFT_tick && q_act == 2 && config_mode == 1)
+	else if(enLEFT_tick && q_act == 2 && config_mode == 1)
 	begin
 	q_next = 5'd0;
 	end
 	
-	else if(~enRIGHT_tick && q_act == 0 && config_mode == 1)
+	else if(enRIGHT_tick && q_act == 0 && config_mode == 1)
 	begin
 	q_next = 5'd2;
 	end
 	
-	else if(~enLEFT_tick && q_act == 2 && config_mode == 3)
+	else if(enLEFT_tick && q_act == 2 && config_mode == 3)
 	begin
 	q_next = 5'd0;
 	end
 	
-	else if(~enRIGHT_tick && q_act == 0 && config_mode == 3)
+	else if(enRIGHT_tick && q_act == 0 && config_mode == 3)
 	begin
 	q_next = 5'd2;
 	end	
@@ -115,11 +115,11 @@ assign count_horizontal = q_act;
 
 contador_AD_SS_2dig Instancia_contador_SS//Segundos de la hora
 (
-.clk,
-.reset,
+.clk(clk),
+.reset(reset),
 .en_count(enable_counters),
-.enUP,
-.enDOWN,
+.enUP(enUP),
+.enDOWN(enDOWN),
 .digit1(digit1_SS), .digit0(digit0_SS)
 );
 
@@ -177,8 +177,8 @@ contador_AD_DAY_2dig Instancia_contador_DAY//Día de la fecha
 
 contador_AD_dia_semana Instancia_contador_dia_semana//Día de la semana
 (
-.clk,
-.reset,
+.clk(clk),
+.reset(reset),
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
