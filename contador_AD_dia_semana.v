@@ -74,34 +74,29 @@ end
 
 
 //Lógica de salida
+
 always@*
 begin
-	if(enUP && en_count == 7)
+
+	if (en_count == 7)
 	begin
-	q_next = q_act + 1'b1;
+		if (enUP)
+		begin
+			if (q_act >= 3'd6) q_next = 3'd0;
+			else q_next = q_act + 3'd1;
+		end
+		
+		else if (enDOWN)
+		begin
+			if (q_act == 3'd0) q_next = 3'd6;
+			else q_next = q_act - 3'd1;
+		end
+		else q_next = q_act;
 	end
+	else q_next = q_act;
 	
-	else if(enDOWN && en_count == 7)
-	begin
-	q_next = q_act - 1'b1;
-	end
-	
-	else if(enUP && q_act == 6 && en_count == 7)
-	begin
-	q_next = 3'd0;
-	end
-	
-	else if(enDOWN && q_act == 0 && en_count == 7)
-	begin
-	q_next = 3'd6;
-	end
-	
-	else
-	begin
-	q_next = q_act;
-	end
 end
 
-assign count_data = q_act + 1'b1;//Suma 1 a todas las cuentas de 0->6 a 1->7
+assign count_data = q_act + 3'b1;//Suma 1 a todas las cuentas de 0->6 a 1->7
 
 endmodule

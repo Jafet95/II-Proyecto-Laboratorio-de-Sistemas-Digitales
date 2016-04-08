@@ -75,32 +75,27 @@ end
 
 
 //Lógica de salida
+
 always@*
 begin
-	if(enUP && en_count == 9)
+
+	if (en_count == 9)
 	begin
-	q_next = q_act + 1'b1;
+		if (enUP)
+		begin
+			if (q_act >= 6'd59) q_next = 6'd0;
+			else q_next = q_act + 6'd1;
+		end
+		
+		else if (enDOWN)
+		begin
+			if (q_act == 6'd0) q_next = 6'd59;
+			else q_next = q_act - 6'd1;
+		end
+		else q_next = q_act;
 	end
+	else q_next = q_act;
 	
-	else if(enDOWN && en_count == 9)
-	begin
-	q_next = q_act - 1'b1;
-	end
-	
-	else if(enUP && q_act == 59 && en_count == 9)
-	begin
-	q_next = 6'd0;
-	end
-	
-	else if(enDOWN && q_act == 0 && en_count == 9)
-	begin
-	q_next = 6'd59;
-	end
-	
-	else
-	begin
-	q_next = q_act;
-	end
 end
 
 assign count_data = q_act;

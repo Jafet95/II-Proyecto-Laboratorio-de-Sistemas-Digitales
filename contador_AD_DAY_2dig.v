@@ -77,33 +77,27 @@ end
 //Lógica de salida
 always@*
 begin
-	if(enUP && en_count == 6 && en_count == 6)
+
+	if (en_count == 6)
 	begin
-	q_next = q_act + 1'b1;
+		if (enUP)
+		begin
+			if (q_act >= 5'd30) q_next = 5'd0;
+			else q_next = q_act + 5'd1;
+		end
+		
+		else if (enDOWN)
+		begin
+			if (q_act == 5'd0) q_next = 5'd30;
+			else q_next = q_act - 5'd1;
+		end
+		else q_next = q_act;
 	end
+	else q_next = q_act;
 	
-	else if(enDOWN && en_count == 6)
-	begin
-	q_next = q_act - 1'b1;
-	end
-	
-	else if(enUP && en_count == 6 && q_act == 30)
-	begin
-	q_next = 5'd0;
-	end
-	
-	else if(enDOWN && en_count == 6 && q_act == 0)
-	begin
-	q_next = 5'd30;
-	end
-	
-	else
-	begin
-	q_next = q_act;
-	end
 end
 
-assign count_data = q_act + 1'b1;//Suma 1 a todas las cuentas de 0->30 a 1->31
+assign count_data = q_act + 5'b1;//Suma 1 a todas las cuentas de 0->30 a 1->31
 
 //Decodificaci?n BCD (2 d?gitos)
 

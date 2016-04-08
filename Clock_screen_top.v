@@ -44,6 +44,19 @@ wire [11:0] fig_RGB, text_RGB;
 wire BOX_RING_on;
 wire RING_on, AMPM_on;
 
+//Para generar parpadeo de 4 Hz
+// Bits del contador para generar una señal periódica de (2^N)*10ns
+localparam N =24;//~3Hz
+
+reg [N-1:0] blink_reg;
+reg blink;
+
+localparam N_cursor = 25;//~2Hz
+
+reg [N_cursor-1:0] blink_cursor_reg;
+reg blink_cursor;
+
+
 //Instanciaciones
 
 timing_generator_VGA Instancia_timing_generator_VGA
@@ -79,6 +92,7 @@ generador_caracteres Instancia_generador_caracteres
 .config_mode(config_mode),//1-bit: OR de los tres estados del modo configuración
 .cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
 .pixel_x(pixel_x), .pixel_y(pixel_y),
+.parpadeo(blink_cursor),
 .text_on(text_on), //7 "textos" en total en pantalla (bandera de indica que se debe escribir texto)
 .RING_on(RING_on), .AMPM_on(AMPM_on), //Localización de esos respectivos textos
 .text_RGB(text_RGB) //12 bpp (4 bits para cada color)
@@ -87,11 +101,6 @@ generador_caracteres Instancia_generador_caracteres
 //=============================================
 // Contador para generar pulso de parpadeo
 //=============================================
-// Bits del contador para generar una señal periódica de (2^N)*10ns
-localparam N =24;//~3Hz
-
-reg [N-1:0] blink_reg;
-reg blink;
 
 always @(posedge clock, posedge reset)
 begin
@@ -107,7 +116,24 @@ begin
 		else
 			blink_reg <= blink_reg + 1'b1;
 	end
-end	
+end
+
+//Parpadeo cursor
+always @(posedge clock, posedge reset)
+begin
+	if (reset)begin blink_cursor_reg <= 0; blink_cursor <= 0; end
+	
+	else
+	begin
+		if (blink_cursor_reg == 25'd24999999)
+			begin
+			blink_cursor_reg <= 0;
+			blink_cursor <= ~blink_cursor;
+			end
+		else
+			blink_cursor_reg <= blink_cursor_reg + 1'b1;
+	end
+end		
 //____________________________________________________________________________________________________________
 
 //Multiplexión entre texto o figuras
