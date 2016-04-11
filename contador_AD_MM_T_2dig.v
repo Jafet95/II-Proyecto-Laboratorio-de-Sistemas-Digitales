@@ -25,15 +25,14 @@ input wire reset,
 input wire [3:0] en_count,
 input wire enUP,
 input wire enDOWN,
-output reg [3:0] digit1, digit0
+output wire [7:0] data_MM_T
 );
 
 localparam N = 6; // Para definir el número de bits del contador (hasta 59->6 bits)
 //Declaración de señales
 reg [N-1:0] q_act, q_next;
-reg enUP_reg, enDOWN_reg;
-wire enUP_tick, enDOWN_tick;
 wire [N-1:0] count_data;
+reg [3:0] digit1, digit0;
 
 // Bits del contador para generar una señal periódica de (2^N)*10ns
 localparam N_bits =24;//~4Hz
@@ -175,5 +174,7 @@ case(count_data)
 default:  begin digit1 = 0; digit0 = 0; end
 endcase
 end
+
+assign data_MM_T = {digit1,digit0};
 
 endmodule

@@ -27,10 +27,8 @@ input wire enDOWN,
 input wire enLEFT,
 input wire enRIGHT,
 input wire [1:0] config_mode,//Cuatro estados del modo configuración
-input wire formato_hora,
-output wire [3:0] digit0_HH, digit1_HH, digit0_MM, digit1_MM, digit0_SS, digit1_SS,//
-digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
-digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
+output wire [7:0] btn_data_SS, btn_data_MM, btn_data_HH, btn_data_YEAR, btn_data_MES, btn_data_DAY,
+btn_data_SS_T, btn_data_MM_T, btn_data_HH_T,//Decenas y unidades para los números en pantalla(configuración)
 output wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 output wire [7:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)*****
 output wire [1:0] cursor_location//Marca la posición del cursor en modo configuración
@@ -120,7 +118,7 @@ contador_AD_SS_2dig Instancia_contador_SS//Segundos de la hora
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.digit1(digit1_SS), .digit0(digit0_SS)
+.data_SS(btn_data_SS)
 );
 
 contador_AD_MM_2dig Instancia_contador_MM//Minutos de la hora
@@ -130,7 +128,7 @@ contador_AD_MM_2dig Instancia_contador_MM//Minutos de la hora
 .enUP(enUP),
 .enDOWN(enDOWN),
 .en_count(enable_counters),
-.digit1(digit1_MM), .digit0(digit0_MM)
+.data_MM(btn_data_MM)
 );
 
 contador_AD_HH_2dig Instancia_contador_HH//Horas de la hora
@@ -140,9 +138,8 @@ contador_AD_HH_2dig Instancia_contador_HH//Horas de la hora
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.formato_hora(formato_hora),
 .AM_PM(AM_PM),
-.digit1(digit1_HH), .digit0(digit0_HH)
+.data_HH(btn_data_HH)
 );   
 
 contador_AD_YEAR_2dig Instancia_contador_YEAR//Años de la fecha
@@ -152,7 +149,7 @@ contador_AD_YEAR_2dig Instancia_contador_YEAR//Años de la fecha
 .enUP(enUP),
 .en_count(enable_counters),
 .enDOWN(enDOWN),
-.digit1(digit1_YEAR), .digit0(digit0_YEAR)
+.data_YEAR(btn_data_YEAR)
 );
 
 contador_AD_MES_2dig Instancia_contador_MES//Meses de la fecha
@@ -162,7 +159,7 @@ contador_AD_MES_2dig Instancia_contador_MES//Meses de la fecha
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.digit1(digit1_MES), .digit0(digit0_MES)
+.data_MES(btn_data_MES)
 );
 
 contador_AD_DAY_2dig Instancia_contador_DAY//Día de la fecha
@@ -172,7 +169,7 @@ contador_AD_DAY_2dig Instancia_contador_DAY//Día de la fecha
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.digit1(digit1_DAY), .digit0(digit0_DAY)
+.data_DAY(btn_data_DAY)
 );
 
 contador_AD_dia_semana Instancia_contador_dia_semana//Día de la semana
@@ -192,7 +189,7 @@ contador_AD_SS_T_2dig Instancia_contador_SS_T//Segundos del timer
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.digit1(digit1_SS_T), .digit0(digit0_SS_T)
+.data_SS_T(btn_data_SS_T)
 );
 
 contador_AD_MM_T_2dig Instancia_contador_MM_T//Minutos del timer
@@ -202,7 +199,7 @@ contador_AD_MM_T_2dig Instancia_contador_MM_T//Minutos del timer
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.digit1(digit1_MM_T), .digit0(digit0_MM_T)
+.data_MM_T(btn_data_MM_T)
 );
 
 contador_AD_HH_T_2dig Instancia_contador_HH_T //Horas del timer
@@ -212,7 +209,7 @@ contador_AD_HH_T_2dig Instancia_contador_HH_T //Horas del timer
 .en_count(enable_counters),
 .enUP(enUP),
 .enDOWN(enDOWN),
-.digit1(digit1_HH_T), .digit0(digit0_HH_T)
+.data_HH_T(btn_data_HH_T)
 );
 
 //Lógica de activación de cada contador dependiendo del modo configuración y la cuenta horizontal
