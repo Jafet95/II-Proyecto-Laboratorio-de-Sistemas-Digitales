@@ -25,7 +25,7 @@ input wire [3:0] digit0_HH, digit1_HH, digit0_MM, digit1_MM, digit0_SS, digit1_S
 digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
-input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
+input wire [7:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 input wire [1:0] config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
 input wire [9:0] pixel_x, pixel_y,//Coordenada de cada pixel
@@ -128,13 +128,13 @@ begin
 	4'h7: //Primera letra
 	begin
 	case(dia_semana)
-	3'b001: char_addr_DIA = 7'h4c;//L
-	3'b010: char_addr_DIA = 7'h4d;//M
-	3'b011: char_addr_DIA = 7'h4d;//M
-	3'b100: char_addr_DIA = 7'h4a;//J
-	3'b101: char_addr_DIA = 7'h56;//V
-	3'b110: char_addr_DIA = 7'h53;//S
-	3'b111: char_addr_DIA = 7'h44;//D
+	8'h1: char_addr_DIA = 7'h4c;//L
+	8'h2: char_addr_DIA = 7'h4d;//M
+	8'h3: char_addr_DIA = 7'h4d;//M
+	8'h4: char_addr_DIA = 7'h4a;//J
+	8'h5: char_addr_DIA = 7'h56;//V
+	8'h6: char_addr_DIA = 7'h53;//S
+	8'h7: char_addr_DIA = 7'h44;//D
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -142,13 +142,13 @@ begin
 	4'h8: //Segunda letra
 	begin
 	case(dia_semana)
-	3'b001: char_addr_DIA = 7'h55;//U
-	3'b010: char_addr_DIA = 7'h41;//A
-	3'b011: char_addr_DIA = 7'h49;//I
-	3'b100: char_addr_DIA = 7'h55;//U
-	3'b101: char_addr_DIA = 7'h49;//I
-	3'b110: char_addr_DIA = 7'h41;//A
-	3'b111: char_addr_DIA = 7'h4f;//O
+	8'h1: char_addr_DIA = 7'h55;//U
+	8'h2: char_addr_DIA = 7'h41;//A
+	8'h3: char_addr_DIA = 7'h49;//I
+	8'h4: char_addr_DIA = 7'h55;//U
+	8'h5: char_addr_DIA = 7'h49;//I
+	8'h6: char_addr_DIA = 7'h41;//A
+	8'h7: char_addr_DIA = 7'h4f;//O
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -156,13 +156,13 @@ begin
 	4'h9: //Tercera letra
 	begin
 	case(dia_semana)
-	3'b001: char_addr_DIA = 7'h4e;//N
-	3'b010: char_addr_DIA = 7'h52;//R
-	3'b011: char_addr_DIA = 7'h45;//E
-	3'b100: char_addr_DIA = 7'h45;//E
-	3'b101: char_addr_DIA = 7'h45;//E
-	3'b110: char_addr_DIA = 7'h42;//B
-	3'b111: char_addr_DIA = 7'h4d;//M
+	8'h1: char_addr_DIA = 7'h4e;//N
+	8'h2: char_addr_DIA = 7'h52;//R
+	8'h3: char_addr_DIA = 7'h45;//E
+	8'h4: char_addr_DIA = 7'h45;//E
+	8'h5: char_addr_DIA = 7'h45;//E
+	8'h6: char_addr_DIA = 7'h42;//B
+	8'h7: char_addr_DIA = 7'h4d;//M
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -170,13 +170,13 @@ begin
 	4'ha: //Cuarta letra
 	begin
 	case(dia_semana)
-	3'b001: char_addr_DIA = 7'h45;//E
-	3'b010: char_addr_DIA = 7'h54;//T
-	3'b011: char_addr_DIA = 7'h52;//R
-	3'b100: char_addr_DIA = 7'h56;//V
-	3'b101: char_addr_DIA = 7'h52;//R
-	3'b110: char_addr_DIA = 7'h41;//A
-	3'b111: char_addr_DIA = 7'h49;//I
+	8'h1: char_addr_DIA = 7'h45;//E
+	8'h2: char_addr_DIA = 7'h54;//T
+	8'h3: char_addr_DIA = 7'h52;//R
+	8'h4: char_addr_DIA = 7'h56;//V
+	8'h5: char_addr_DIA = 7'h52;//R
+	8'h6: char_addr_DIA = 7'h41;//A
+	8'h7: char_addr_DIA = 7'h49;//I
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -184,13 +184,13 @@ begin
 	4'hb: //Quinta letra
 	begin
 	case(dia_semana)
-	3'b001: char_addr_DIA = 7'h53;//S
-	3'b010: char_addr_DIA = 7'h45;//E
-	3'b011: char_addr_DIA = 7'h43;//C
-	3'b100: char_addr_DIA = 7'h45;//E
-	3'b101: char_addr_DIA = 7'h4e;//N
-	3'b110: char_addr_DIA = 7'h44;//D
-	3'b111: char_addr_DIA = 7'h4e;//N
+	8'h1: char_addr_DIA = 7'h53;//S
+	8'h2: char_addr_DIA = 7'h45;//E
+	8'h3: char_addr_DIA = 7'h43;//C
+	8'h4: char_addr_DIA = 7'h45;//E
+	8'h5: char_addr_DIA = 7'h4e;//N
+	8'h6: char_addr_DIA = 7'h44;//D
+	8'h7: char_addr_DIA = 7'h4e;//N
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -198,12 +198,12 @@ begin
 	4'hc: //Sexta letra
 	begin
 	case(dia_semana)
-	3'b010: char_addr_DIA = 7'h53;//S
-	3'b011: char_addr_DIA = 7'h4f;//O
-	3'b100: char_addr_DIA = 7'h53;//S
-	3'b101: char_addr_DIA = 7'h45;//E
-	3'b110: char_addr_DIA = 7'h4f;//O
-	3'b111: char_addr_DIA = 7'h47;//G
+	8'h2: char_addr_DIA = 7'h53;//S
+	8'h3: char_addr_DIA = 7'h4f;//O
+	8'h4: char_addr_DIA = 7'h53;//S
+	8'h5: char_addr_DIA = 7'h45;//E
+	8'h6: char_addr_DIA = 7'h4f;//O
+	8'h7: char_addr_DIA = 7'h47;//G
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -211,9 +211,9 @@ begin
 	4'hd: //Séptima letra
 	begin
 	case(dia_semana)
-	3'b011: char_addr_DIA = 7'h4c;//L
-	3'b101: char_addr_DIA = 7'h53;//S
-	3'b111: char_addr_DIA = 7'h4f;//O
+	8'h3: char_addr_DIA = 7'h4c;//L
+	8'h5: char_addr_DIA = 7'h53;//S
+	8'h7: char_addr_DIA = 7'h4f;//O
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -221,7 +221,7 @@ begin
 	4'he: //Octava letra
 	begin
 	case(dia_semana)
-	3'b011: char_addr_DIA = 7'h45;//E
+	8'h3: char_addr_DIA = 7'h45;//E
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end
@@ -229,7 +229,7 @@ begin
 	4'hf: //Novena letra
 	begin
 	case(dia_semana)
-	3'b011: char_addr_DIA = 7'h53;//S
+	8'h3: char_addr_DIA = 7'h53;//S
 	default: char_addr_DIA = 7'h00;//Espacio en blanco
 	endcase
 	end

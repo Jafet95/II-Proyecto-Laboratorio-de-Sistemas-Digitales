@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module deco_hold_registros(
-	input clk,reset,reg_rd,
+	input reg_rd,
 	input [3:0]addr_mem_local,
 	output reg hold_seg_hora,
 	output reg hold_min_hora,
@@ -33,21 +33,9 @@ module deco_hold_registros(
 	output reg hold_hora_timer
     );
 	 
-always@(posedge clk ,posedge reset)
+always@*
+
 begin
-if (reset) begin
-	hold_seg_hora = 1'b0;
-	hold_min_hora= 1'b0;
-	hold_hora_hora= 1'b0;
-	hold_dia_fecha= 1'b0;
-	hold_mes_fecha= 1'b0;
-	hold_jahr_fecha= 1'b0;
-	hold_dia_semana= 1'b0;
-	hold_seg_timer= 1'b0;
-	hold_min_timer= 1'b0;
-	hold_hora_timer= 1'b0;
-end
-else begin
 	if (~reg_rd) begin
 	case(addr_mem_local)
 		4'd0: begin
@@ -184,6 +172,7 @@ else begin
 	end
 	endcase
 	end
+	
 	else begin
 	hold_seg_hora = 1'b1;
 		hold_min_hora= 1'b1;
@@ -196,7 +185,6 @@ else begin
 		hold_min_timer= 1'b1;
 		hold_hora_timer= 1'b1;
 	end
-end
-end
 
+end
 endmodule

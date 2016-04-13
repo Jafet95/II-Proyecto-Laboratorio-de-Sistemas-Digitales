@@ -25,11 +25,11 @@ input wire [3:0] digit0_HH, digit1_HH, digit0_MM, digit1_MM, digit0_SS, digit1_S
 digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
-input wire [2:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
+input wire [7:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
 input wire [1:0]config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
-input wire timer_end,//bandera proveniente del RTC que indica la finalización del tiempo del timer
 input wire formato_hora,//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
+input wire estado_alarma,
 output wire hsync,vsync,
 output wire [11:0] RGB
 //output wire pixel_tick
@@ -55,7 +55,6 @@ localparam N_cursor = 25;//~2Hz
 
 reg [N_cursor-1:0] blink_cursor_reg;
 reg blink_cursor;
-
 
 //Instanciaciones
 
@@ -152,8 +151,8 @@ begin
 		if(text_on) RGB_next = text_RGB;
 		else if (AMPM_on && formato_hora) RGB_next = text_RGB;
 		else if(graph_on) RGB_next = fig_RGB;
-		else if (BOX_RING_on && timer_end && blink) RGB_next = fig_RGB;
-		else if (RING_on && timer_end && blink) RGB_next = text_RGB;
+		else if (BOX_RING_on && estado_alarma && blink) RGB_next = fig_RGB;
+		else if (RING_on && estado_alarma && blink) RGB_next = text_RGB;
 		else RGB_next = 12'h000;//Fondo negro
 end
 

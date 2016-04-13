@@ -271,8 +271,6 @@ logica_distributir_dato_rtc_registros instancia_logica_distributir_dato_rtc_regi
 
 ///////////////intnacia logica para cs'=s
 decofdificador_cs_registros logica_para_cs_registros (
-    .clk(clk), 
-    .reset(reset), 
     .funcion_conf(out_FSM_general_funcion_conf), 
     .cs_seg_hora(cs_seg_hora), 
     .cs_min_hora(cs_min_hora), 
@@ -308,9 +306,8 @@ logica_distruibuir_mem_local_hacia_rtc instancia_logica_distruibuir_mem_local_ha
 ////////////////////
 
 ////////////////////intancia decodificador para hold
-deco_hold_registros instancia_deco_hold (
-    .clk(clk), 
-    .reset(reset), 
+deco_hold_registros instancia_deco_hold 
+(
 	 .reg_rd(rd),
     .addr_mem_local(addr_mem_local), 
     .hold_seg_hora(hold_seg_hora), 
@@ -323,7 +320,7 @@ deco_hold_registros instancia_deco_hold (
     .hold_seg_timer(hold_seg_timer), 
     .hold_min_timer(hold_min_timer), 
     .hold_hora_timer(hold_hora_timer)
-    );
+);
 ////////////////////////
 /////////////// INTANCIA CONTADORES
 contadores_configuracion instancia_contadores_A_D (

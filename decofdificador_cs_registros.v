@@ -19,7 +19,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module decofdificador_cs_registros(
-	input clk,reset,
 	input [1:0]funcion_conf,
 	output reg cs_seg_hora,
 	output reg cs_min_hora,
@@ -33,21 +32,9 @@ module decofdificador_cs_registros(
 	output reg cs_hora_timer
     );
 	 
-always@(posedge clk ,posedge reset)
+always@*
 begin
-if (reset) begin
-	cs_seg_hora = 1'b0;
-	cs_min_hora= 1'b0;
-	cs_hora_hora= 1'b0;
-	cs_dia_fecha= 1'b0;
-	cs_mes_fecha= 1'b0;
-	cs_jahr_fecha= 1'b0;
-	cs_dia_semana= 1'b0;
-	cs_seg_timer= 1'b0;
-	cs_min_timer= 1'b0;
-	cs_hora_timer= 1'b0;
-end
-else begin
+
 	case(funcion_conf)
 		2'b00: begin
 		cs_seg_hora = 1'b0;
@@ -101,6 +88,5 @@ else begin
 	end
 endcase
 end
-end 
 
 endmodule

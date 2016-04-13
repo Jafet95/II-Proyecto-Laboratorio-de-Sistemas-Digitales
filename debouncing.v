@@ -22,10 +22,10 @@ module debouncing
 (
 input wire clk,
 input wire reset,
-input wire [3:0] sw,//4 interruptores
-input wire [3:0] btn,//4 botones
-output wire [3:0] sw_db,//debounce
-output wire [3:0] btn_db//debounce
+input wire [2:0] sw,//3 interruptores
+input wire [4:0] btn,//5 botones
+output wire [2:0] sw_db,//debounce
+output wire [4:0] btn_db//debounce
 );
 
 antirrebote Instancia_antirrebote_SW0//SW0: config mode
@@ -48,14 +48,6 @@ antirrebote Instancia_antirrebote_SW2//SW2: formato hora
 .sw(sw[2]),//Entrada original de botón, switch
 .db(sw_db[2])//Entrada sin rebote de botón, switch
 );
-
-antirrebote Instancia_antirrebote_SW3//SW3: Para generar timer_end
-(
-.clk(clk), .reset(reset),
-.sw(sw[3]),//Entrada original de botón, switch
-.db(sw_db[3])//Entrada sin rebote de botón, switch
-);
-
 
 antirrebote Instancia_antirrebote_BTN0//UP
 (
@@ -83,6 +75,13 @@ antirrebote Instancia_antirrebote_BTN3//RIGHT
 .clk(clk), .reset(reset),
 .sw(btn[3]),//Entrada original de botón, switch
 .db(btn_db[3])//Entrada sin rebote de botón, switch
+);
+
+antirrebote Instancia_antirrebote_BTN4//CENTER
+(
+.clk(clk), .reset(reset),
+.sw(btn[4]),//Entrada original de botón, switch
+.db(btn_db[4])//Entrada sin rebote de botón, switch
 );
 
 endmodule

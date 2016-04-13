@@ -59,10 +59,10 @@ assign dato = (in_flag_dato & ~in_wr)? dato_secundario : 8'bZ;
 always @(dato,controlador_dato,in_direccion_dato,in_flag_dato,in_reg_dato,addr_RAM)begin
 if(in_flag_dato) begin
 	case({controlador_dato,in_direccion_dato})
-		2'b00: begin dato_secundario = 8'dZ; // OPCION LEER DIRECCION NO DEBE PASAR
+		2'b00: begin dato_secundario = 8'd0; // OPCION LEER DIRECCION NO DEBE PASAR
 		out_reg_dato = 8'b0;
 		end
-		2'b01: begin dato_secundario = 8'dZ;//LEER DATO
+		2'b01: begin dato_secundario = 8'd0;//LEER DATO
 		out_reg_dato = dato;
 		end 
 		2'b10: begin dato_secundario = addr_RAM;// ESCRIBIR DIRECCION RAM
@@ -79,31 +79,13 @@ end
 end
 
 //assign dato_direccion = addr_RAM;
-always@( clk,in_flag_inicio , reset, in_dato,in_dato_inicio ) begin
+always@(posedge clk, posedge reset) 
+begin
 if (reset) in_reg_dato <= 8'd0;
 else begin
 if (in_flag_inicio) in_reg_dato <= in_dato_inicio;
 else in_reg_dato <= in_dato;
 end
 end
-/*
-always @(clk,in_direccion_dato,addr_RAM,in_reg_dato) begin
-if (in_direccion_dato) temp_dato <= in_reg_dato;
-else temp_dato <= addr_RAM;
-end
-
-
-//Secuencia de asiganacion
-always@( controlador_dato , temp_dato, dato_secundario, dato , reset)
-begin
-	if(controlador_dato)begin dato_secundario <= temp_dato; 
-	
-	end
-	else begin out_reg_dato <= dato;
-	dato_secundario <= ;
-	end
-end
-		*/ 
-//*********************************************************
 
 endmodule

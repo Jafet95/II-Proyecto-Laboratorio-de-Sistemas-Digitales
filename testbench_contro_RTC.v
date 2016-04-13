@@ -105,6 +105,7 @@ always #10 clk = ~clk;
 
 		// Wait 100 ns for global reset to finish
 		#10 reset = 0;
+		//#40 dato = 8'd12;
 		#5000 sw2 = 1;
 		#2000 sw2 = 0;
 		#1000000 $stop;

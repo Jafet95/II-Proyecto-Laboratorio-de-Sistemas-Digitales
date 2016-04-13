@@ -38,7 +38,7 @@ reg [7:0]next_dato;
 reg [7:0]dato_temp;
 
 //Secuencial
-always@(posedge clk, posedge reset)
+always@(negedge clk, posedge reset)
 begin
 	if(reset) reg_dato <= 0;
 	else reg_dato <= next_dato;

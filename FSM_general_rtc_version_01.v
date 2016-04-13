@@ -56,9 +56,10 @@ assign out_funcion_conf = {in_sw2,in_sw1};
 localparam  [2:0]
 espera = 3'd0,
 inicio = 3'd1,
-escritura = 3'd2,
+escritura_hora_fecha = 3'd2,
 lectura_cte = 3'd3,
-lectura_configuracion = 3'd4; 
+lectura_configuracion = 3'd4,
+escritura_timer = 3'd5; 
 
   
 //Descripción del comportamiento
@@ -154,10 +155,12 @@ always@*
 				4'd2: begin
 				out_addr_ram_rtc = 8'h10;
 				out_dato_inicio = 8'hD2;
-				 
-				//reset_count = 1'b1;
 				end
-				4'd3: begin 
+				4'd3: begin
+				out_addr_ram_rtc = 8'h0;
+				out_dato_inicio = 8'h00;
+				end
+				4'd4: begin 
 				state_next = lectura_cte;
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
@@ -172,21 +175,18 @@ always@*
 			endcase 
 			end	
 			
-	///////////////////////////// BLOQUE DE ESCRITURA////////////////////////////////////		 
+	///////////////////////////// BLOQUE DE ESCRITURA HORA FECHA////////////////////////////////////		 
 			
-		escritura:
+		escritura_hora_fecha:
 			
 			begin
 			reg_sel_bloque = 2'd3;
-			//reset_count = 1'b0;
 			out_funcion_w_r = 1'b1;
-			//sel_count = 2'd0;
 			out_flag_inicio = 1'b0;
+			reg_hora_timer = 1'b0;
 			out_dato_inicio = 8'h00;
-			//sel_count = 2'd2;
 			out_en_funcion_rtc = 1'b1;
 				/////escribe registros de hora
-				if (~reg_hora_timer) begin
 				case(q_reg)
 				4'd0: out_addr_ram_rtc = 8'h21;
 				4'd1: out_addr_ram_rtc = 8'h22;
@@ -200,7 +200,6 @@ always@*
 				4'd8: begin state_next = lectura_cte;
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
-				//reset_count = 1'b1;
 				end
 				
 				default: begin
@@ -209,8 +208,20 @@ always@*
 				end
 			endcase
 			end
+			
+			
+/////////////////////////////////////////////////////7
+///////////////////////////// BLOQUE DE ESCRITURA TIMER////////////////////////////////////		 
+			
+		escritura_timer:
+			begin
+			reg_sel_bloque = 2'd3;
+			out_funcion_w_r = 1'b1;
+			out_flag_inicio = 1'b0;
+			out_dato_inicio = 8'h00;
+			out_en_funcion_rtc = 1'b1;	
+			reg_hora_timer = 1'b0;
 			///////////////escribe registros timer
-			else begin
 				case(q_reg)
 				
 				4'd0:out_addr_ram_rtc = 8'h41;
@@ -230,7 +241,13 @@ always@*
 				end
 				endcase
 			end
-			end
+
+//////////////////////////////
+
+
+
+
+
 ////////////////////////////////////	BLOQUE DE LECTURA CONSTANTE //////////////////////////////////////		
 		lectura_cte:
 			begin 
@@ -239,7 +256,6 @@ always@*
 			out_flag_inicio = 1'b0;
 			reg_hora_timer = 1'b0;
 			out_funcion_w_r = 1'b0;
-			//sel_count = 2'd3;
 			out_en_funcion_rtc = 1'b1;
 				case(q_reg)
 				4'd0: out_addr_ram_rtc = 8'hF0;
@@ -273,19 +289,22 @@ always@*
 			lectura_configuracion:
 			begin
 			out_en_funcion_rtc = 1'b1;
-			reg_sel_bloque = 2'd0;
+			reg_sel_bloque = 2'd2;
 			out_funcion_w_r = 1'b0;
 			out_flag_inicio = 1'b0;
-			//sel_count = 2'd1;
 			out_dato_inicio = 8'h00;
 			out_en_funcion_rtc = 1'b1;
 
 			case (out_funcion_conf)
 			2'd0:begin
-					state_next = escritura;
-					//reset_count = 1'b1;
 					out_en_funcion_rtc = 1'b0;
 					out_addr_ram_rtc = 8'h00;
+					if (reg_hora_timer) begin state_next = escritura_timer;
+					reg_hora_timer = 1'b0;
+					end
+					else begin state_next = escritura_hora_fecha;
+					reg_hora_timer = 1'b0;
+					end
 			end
 			/////////// CONFIGURANDO HORA
 			2'd1: begin
