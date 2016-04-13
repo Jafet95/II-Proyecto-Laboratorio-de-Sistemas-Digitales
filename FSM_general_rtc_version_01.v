@@ -255,7 +255,7 @@ always@*
 				4'd10: out_addr_ram_rtc = 8'h43;
 				
 				4'd12:begin
-				out_en_funcion_rtc = 1'b0;
+				out_en_funcion_rtc = 1'b1;
 				out_addr_ram_rtc = 8'h00;
 				if (flag_config) state_next = lectura_configuracion;
 				else state_next = lectura_cte;
@@ -263,7 +263,7 @@ always@*
 				
 				default: begin
 				out_funcion_w_r = 1'b0;
-				out_en_funcion_rtc = 1'b0;
+				out_en_funcion_rtc = 1'b1;
 				out_addr_ram_rtc = 8'h00;
 				end
 				
