@@ -50,11 +50,11 @@ reg [7:0]in_reg_dato;
 reg [7:0]temp_dato;
 
 //*********************************************************
-
+ 
 // ASIGNACION DE BUS DE 3 ESTADOS
-assign dato = (in_flag_dato & ~in_wr)? dato_secundario : 8'bZ;
+assign dato = (in_flag_dato & in_wr)? dato_secundario : 8'bZ;
 
-
+ 
 //CONTROLADOR DE SALIDA
 always @(dato,controlador_dato,in_direccion_dato,in_flag_dato,in_reg_dato,addr_RAM)begin
 if(in_flag_dato) begin
