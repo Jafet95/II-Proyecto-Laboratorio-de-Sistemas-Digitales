@@ -55,8 +55,8 @@ assign dato = (in_flag_dato)? dato_secundario : 8'bZ;
 
  
 //CONTROLADOR DE SALIDA
-always @(dato,controlador_dato,in_direccion_dato,in_flag_dato,in_reg_dato,addr_RAM)begin
-if(in_flag_dato) begin
+always @(dato,controlador_dato,in_direccion_dato,in_reg_dato,addr_RAM)
+begin
 	case({controlador_dato,in_direccion_dato})
 		2'b00: begin dato_secundario = 8'd0; // OPCION LEER DIRECCION NO DEBE PASAR
 		out_reg_dato = 8'b0;
@@ -69,12 +69,8 @@ if(in_flag_dato) begin
 		end 
 		2'b11: begin  dato_secundario = in_reg_dato;// ESCRIBE DATO
 		out_reg_dato = 8'd0;
-		end
-	endcase
 	end
-else begin out_reg_dato = 8'd0;
-dato_secundario = 8'd0;
-end
+	endcase
 end
 
 //assign dato_direccion = addr_RAM;

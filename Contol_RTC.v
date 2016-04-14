@@ -145,7 +145,7 @@ FSM_general_rtc_version_01 FSM_general (
 
 
 ///////////////intancia generador de pulsos RTC //////////
-generador_signal_contol_RTC lector_escritor (
+generador_signal_contol_RTC lector_escritor  (
     .clk(clk), 
     .reset(reset), 
     .in_escribir_leer(out_FSM_general_funcion_w_r), 
@@ -182,7 +182,6 @@ logica_para_Escribir_Leer_Mux instancia_captura_escritura_bus_de_datos (
 
 //////////intancia traductor addr_rtc_addr_mem_local 
 traducto_addr_rtc_addr_mem_local traductor (
-    .clk(clk), 
     .reset(reset), 
     .addr_rtc(out_FSM_general_addr_ram_rtc), 
     .addr_mem_local(addr_mem_local)
@@ -292,7 +291,7 @@ logica_distruibuir_mem_local_hacia_rtc instancia_logica_distruibuir_mem_local_ha
     .in_addr_mem_local(addr_mem_local), 
     .in_seg_hora(out_seg_hora), 
     .in_min_hora(out_min_hora), 
-    .in_hora_hora(out_hora_hora), 
+    .in_hora_hora(data_HH), 
     .in_dia_fecha(out_dia_fecha), 
     .in_mes_fecha(out_mes_fecha), 
     .in_jahr_fecha(out_jahr_fecha), 
@@ -308,7 +307,8 @@ logica_distruibuir_mem_local_hacia_rtc instancia_logica_distruibuir_mem_local_ha
 deco_hold_registros instancia_deco_hold 
 (
 	 .reg_rd(rd),
-    .addr_mem_local(addr_mem_local), 
+    .addr_mem_local(addr_mem_local),
+	 .funcion_conf(out_FSM_general_funcion_conf),
     .hold_seg_hora(hold_seg_hora), 
     .hold_min_hora(hold_min_hora), 
     .hold_hora_hora(hold_hora_hora), 
