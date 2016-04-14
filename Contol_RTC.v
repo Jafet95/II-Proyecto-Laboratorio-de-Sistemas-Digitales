@@ -145,7 +145,7 @@ FSM_general_rtc_version_01 FSM_general (
 
 
 ///////////////intancia generador de pulsos RTC //////////
-Lector_RTC lector_escritor (
+generador_signal_contol_RTC lector_escritor (
     .clk(clk), 
     .reset(reset), 
     .in_escribir_leer(out_FSM_general_funcion_w_r), 
@@ -162,7 +162,7 @@ Lector_RTC lector_escritor (
     );
 ////////////////////////////////
 
-
+ 
 
 //////////////////intancia I/O datos////////
 logica_para_Escribir_Leer_Mux instancia_captura_escritura_bus_de_datos (
@@ -172,7 +172,6 @@ logica_para_Escribir_Leer_Mux instancia_captura_escritura_bus_de_datos (
     .in_direccion_dato(out_lector_direccion_dato), 
     .in_dato_inicio(out_FSM_general_dato_inicio), 
     .in_flag_inicio(out_FSM_general_flag_inicio), 
-    .in_wr(rd), 
     .in_dato(out_dato_para_rtc), 
     .out_reg_dato(in_dato_rtc), 
     .addr_RAM(out_FSM_general_addr_ram_rtc), 

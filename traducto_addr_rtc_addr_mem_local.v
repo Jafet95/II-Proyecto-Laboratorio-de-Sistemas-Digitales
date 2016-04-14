@@ -19,12 +19,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module traducto_addr_rtc_addr_mem_local(
-	input clk,
 	input reset,
 	input [7:0]addr_rtc,
 	output reg [3:0]addr_mem_local
     );
-	 always@(posedge clk , posedge reset) 
+	 always@*
 	 begin
 	 if (reset) addr_mem_local = 4'b1111;
 	 else begin
