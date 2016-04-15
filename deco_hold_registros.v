@@ -21,7 +21,7 @@
 module deco_hold_registros(
 	input reg_rd,
 	input [3:0]addr_mem_local,
-	input [1:0]funcion_conf,
+	input [2:0]funcion_conf,
 	output reg hold_seg_hora,
 	output reg hold_min_hora,
 	output reg hold_hora_hora,
@@ -38,8 +38,7 @@ always@*
 begin
 case(funcion_conf)
 
-2'b0://Modo normal
-
+3'b000://Modo normal
 	if (~reg_rd) begin
 	case(addr_mem_local)
 	4'd0: begin
@@ -190,7 +189,7 @@ case(funcion_conf)
 		hold_hora_timer= 1'b1;
 	end
 
-2'b01://Configura hora
+3'b001://Configura hora
 begin
 	hold_seg_hora = 1'b0;
 	hold_min_hora= 1'b0;
@@ -285,7 +284,7 @@ begin
 	end
 end
 
-2'b10://Configura fecha
+3'b010://Configura fecha
 begin
 	hold_dia_fecha= 1'b0;
 	hold_mes_fecha= 1'b0;
@@ -363,7 +362,7 @@ begin
 	end
 end
 
-2'b11://Configura timer
+3'b100://Configura timer
 begin
 	hold_seg_timer= 1'b0;
 	hold_min_timer= 1'b0;
@@ -455,6 +454,18 @@ begin
 		hold_jahr_fecha= 1'b1;
 		hold_dia_semana= 1'b1;
 	end
+end
+default: begin
+		hold_seg_hora = 1'b0;
+		hold_min_hora= 1'b0;
+		hold_hora_hora= 1'b0;
+		hold_dia_fecha= 1'b0;
+		hold_mes_fecha= 1'b0;
+		hold_jahr_fecha= 1'b0;
+		hold_dia_semana= 1'b0;
+		hold_seg_timer = 1'b0;
+		hold_min_timer = 1'b0;
+		hold_hora_timer = 1'b0;
 end
 endcase
 end

@@ -21,6 +21,7 @@
 module Contol_RTC(
 	input clk,
 	input reset,
+	input sw0,
 	input sw1,
 	input sw2,
 	input enUP,
@@ -47,7 +48,7 @@ module Contol_RTC(
 	output reg AM_PM
     );
 /////////////// conexiones
-wire [1:0]out_FSM_general_funcion_conf;
+wire [2:0]out_FSM_general_funcion_conf;
 wire [7:0]out_FSM_general_addr_ram_rtc;
 wire [7:0]out_FSM_general_dato_inicio;
 wire out_FSM_general_funcion_w_r;///// 1 escribe en rtc / 0 lee de rtc
@@ -127,7 +128,8 @@ reg [3:0]digit0_HH, digit1_HH;
 FSM_general_rtc_version_01 FSM_general (
     .clk(clk), 
     .reset(reset), 
-    .in_flag_done(out_lector_escritor_flag_done), 
+    .in_flag_done(out_lector_escritor_flag_done),
+    .in_sw0(sw0),	 
     .in_sw1(sw1), 
     .in_sw2(sw2), 
     .out_funcion_conf(out_FSM_general_funcion_conf), 
@@ -135,9 +137,7 @@ FSM_general_rtc_version_01 FSM_general (
     .out_dato_inicio(out_FSM_general_dato_inicio), 
     .out_flag_inicio(out_FSM_general_flag_inicio), 
     .out_funcion_w_r(out_FSM_general_funcion_w_r), 
-    .out_en_funcion_rtc(out_FSM_general_en_funcion_rtc), 
-    .q(), 
-    .state_now()
+    .out_en_funcion_rtc(out_FSM_general_en_funcion_rtc)
     );
 ///////////////////////////////
 

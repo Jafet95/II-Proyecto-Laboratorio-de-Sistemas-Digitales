@@ -19,20 +19,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module FSM_general_rtc_version_01(	
+ 	
 	input clk,
 	input reset,
 	input in_flag_done,
+	input in_sw0,
 	input in_sw1,
 	input	in_sw2,
 
-	output wire [1:0]out_funcion_conf,
+	output wire [2:0]out_funcion_conf,
 	output reg [7:0]out_addr_ram_rtc,
 	output reg [7:0]out_dato_inicio,
 	output reg out_flag_inicio,
 	output reg out_funcion_w_r,
-	output reg out_en_funcion_rtc,
-	output wire [3:0]q,
-	output wire [2:0]state_now
+	output reg out_en_funcion_rtc
     );
 	 
 //////////parametros locales	 
@@ -48,18 +48,17 @@ reg reg_hora_timer;
 reg flag_config;
 reg [1:0]sel_count;
 
+assign out_funcion_conf = {in_sw2,in_sw1,in_sw0};
 
-
-assign q = q_reg;
-assign out_funcion_conf = {in_sw2,in_sw1};
-
-localparam  [2:0]
-espera = 3'd0,
-inicio = 3'd1,
-escritura_hora_fecha = 3'd2,
-lectura_cte = 3'd3,
-lectura_configuracion = 3'd4,
-escritura_timer = 3'd5; 
+localparam  [3:0]
+espera = 4'd0,
+inicio = 4'd1,
+lectura_cte = 4'd2,
+lectura_configuracion_hora = 4'd3,
+lectura_configuracion_fecha = 4'd4,
+lectura_configuracion_timer = 4'd5,
+escritura_hora_fecha = 4'd6,
+escritura_timer = 4'd7; 
 
   
 //Descripción del comportamiento
@@ -78,15 +77,6 @@ else q_next = q_reg;
 end
  
 
-assign state_now = state_reg;
-always @(posedge clk, posedge reset) begin
-	if (reset) flag_config = 0;
-	else begin
-		if (out_funcion_conf == 2'b00) flag_config = 1'b0;
-		else flag_config = 1'b1;
-	end
-
-end
 //////////////////////////
 ////logica secuencial
 always @(posedge clk, posedge reset)
@@ -98,15 +88,11 @@ begin
      state_reg <= state_next;
 end
 
-reg [1:0]reg_sel_bloque;
-reg [1:0]next_sel_bloque;
-always @(reg_sel_bloque , next_sel_bloque,reset) begin
-	if (reset) reset_count = 1'b1;
-	else begin
+reg [2:0]reg_sel_bloque;
+reg [2:0]next_sel_bloque;
+always @* begin
 	if(reg_sel_bloque != next_sel_bloque) reset_count = 1'b1;
 	else reset_count = 1'b0;
-	end
-	
 end
 
 
@@ -116,32 +102,25 @@ always@*
 	begin
 	out_addr_ram_rtc = 8'h00;
 	state_next = state_reg;	
-	next_sel_bloque = reg_sel_bloque;
+	reg_sel_bloque = next_sel_bloque;
 	case(state_reg)
 		espera:  
 			begin
-			//sel_count = 2'd0;
 			out_en_funcion_rtc = 0;
-			//reset_count = 1'b1;
 			state_next = inicio;
 			out_flag_inicio = 1'b0;
 			out_funcion_w_r = 1'b0;
-			reg_hora_timer = 1'b0;
 			out_addr_ram_rtc = 8'h00;
 			out_dato_inicio  = 8'h00;
-			reg_sel_bloque = 2'd0;
+			next_sel_bloque = 3'd0;
 			end
 			 
-			
 		inicio:
 			begin
-			//reset_count = 1'b0;
-			reg_hora_timer = 1'b0;
 			out_funcion_w_r = 1'b1;
-			//sel_count = 2'd0;
 			out_flag_inicio = 1'b1;
 			out_en_funcion_rtc = 1'b1;
-			reg_sel_bloque = 2'd0;
+			next_sel_bloque = 3'd1;
 			case(q_reg) 
 				4'd0:begin
 				out_addr_ram_rtc = 8'h02;
@@ -178,15 +157,12 @@ always@*
 	///////////////////////////// BLOQUE DE ESCRITURA HORA FECHA////////////////////////////////////		 
 			
 		escritura_hora_fecha:
-			
 			begin
-			reg_sel_bloque = 2'd3;
+			next_sel_bloque = 3'd6;
 			out_funcion_w_r = 1'b1;
 			out_flag_inicio = 1'b0;
-			reg_hora_timer = 1'b0;
 			out_dato_inicio = 8'h00;
 			out_en_funcion_rtc = 1'b1;
-				/////escribe registros de hora
 				case(q_reg)
 				4'd0: out_addr_ram_rtc = 8'h21;
 				4'd1: out_addr_ram_rtc = 8'h22;
@@ -210,51 +186,34 @@ always@*
 			end
 			
 			
-/////////////////////////////////////////////////////7
+////////////////////////////////////////////////////
 ///////////////////////////// BLOQUE DE ESCRITURA TIMER////////////////////////////////////		 
 			
 		escritura_timer:
 			begin
-			reg_sel_bloque = 2'd3;
+			next_sel_bloque = 3'd7;
 			out_funcion_w_r = 1'b1;
 			out_flag_inicio = 1'b0;
 			out_dato_inicio = 8'h00;
 			out_en_funcion_rtc = 1'b1;	
-			reg_hora_timer = 1'b0;
-			///////////////escribe registros timer
 				case(q_reg)
-				
 				4'd0:out_addr_ram_rtc = 8'h41;
 				4'd1: out_addr_ram_rtc = 8'h42;
 				4'd2: out_addr_ram_rtc = 8'h43;
 				4'd3: out_addr_ram_rtc = 8'hF2;
-				
-				
 				4'd4: begin state_next = lectura_cte;
-				//reset_count = 1'b1;
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end
-				default: begin
-				//reset_count = 1'b1;
-				out_en_funcion_rtc = 1'b0;
-				end
+				default: out_en_funcion_rtc = 1'b0;
 				endcase
 			end
-
-//////////////////////////////
-
-
-
-
-
 ////////////////////////////////////	BLOQUE DE LECTURA CONSTANTE //////////////////////////////////////		
 		lectura_cte:
 			begin 
-			reg_sel_bloque = 2'd1;
+			next_sel_bloque = 2'd2;
 			out_dato_inicio = 8'h00;
 			out_flag_inicio = 1'b0;
-			reg_hora_timer = 1'b0;
 			out_funcion_w_r = 1'b0;
 			out_en_funcion_rtc = 1'b1;
 				case(q_reg)
@@ -269,14 +228,16 @@ always@*
 				4'd8: out_addr_ram_rtc = 8'h41;
 				4'd9: out_addr_ram_rtc = 8'h42;
 				4'd10: out_addr_ram_rtc = 8'h43;
-				
-				4'd12:begin
+				4'd11:begin
 				out_en_funcion_rtc = 1'b1;
 				out_addr_ram_rtc = 8'h00;
-				if (flag_config) state_next = lectura_configuracion;
-				else state_next = lectura_cte;
+				case(out_funcion_conf)
+				3'b001: state_next = lectura_configuracion_hora;
+				3'b010: state_next = lectura_configuracion_fecha;
+				3'b100: state_next = lectura_configuracion_timer;
+				default: state_next = lectura_cte;
+				endcase
 				end
-				
 				default: begin
 				out_funcion_w_r = 1'b0;
 				out_en_funcion_rtc = 1'b1;
@@ -286,48 +247,37 @@ always@*
 			endcase
 			end
 /////////////////////////////// BLOQUE DE LECTURA EN MODO CONFIGURACION/////////////////////			
-			lectura_configuracion:
+			lectura_configuracion_hora:
 			begin
 			out_en_funcion_rtc = 1'b1;
-			reg_sel_bloque = 2'd2;
+			next_sel_bloque = 3'd3;
 			out_funcion_w_r = 1'b0;
 			out_flag_inicio = 1'b0;
 			out_dato_inicio = 8'h00;
 			out_en_funcion_rtc = 1'b1;
-
-			case (out_funcion_conf)
-			2'd0:begin
-					out_en_funcion_rtc = 1'b0;
-					out_addr_ram_rtc = 8'h00;
-					if (reg_hora_timer) begin state_next = escritura_timer;
-					reg_hora_timer = 1'b0;
-					end
-					else begin state_next = escritura_hora_fecha;
-					reg_hora_timer = 1'b0;
-					end
-			end
-			/////////// CONFIGURANDO HORA
-			2'd1: begin
-				reg_hora_timer = 1'b0;
 				case(q_reg)
 				4'd0: out_addr_ram_rtc = 8'hF2;
 				4'd1: out_addr_ram_rtc = 8'h41;
 				4'd2: out_addr_ram_rtc = 8'h42;
-				4'd3: begin 
-					out_addr_ram_rtc = 8'h43;
-					//reset_count = 1'b1;
-						end
-				
+				4'd3: out_addr_ram_rtc = 8'h43;
+				4'd4: begin
+				if (out_funcion_conf == 3'b000) state_next = escritura_hora_fecha;
+				else state_next = lectura_configuracion_hora;
+				end
 				default: begin
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end
-				
 				endcase
 			end
-			////// CONFIGURANDO FECHA
-			2'd2: begin
-				reg_hora_timer = 1'b0;
+			
+			lectura_configuracion_fecha: begin
+			out_en_funcion_rtc = 1'b1;
+			next_sel_bloque = 3'd4;
+			out_funcion_w_r = 1'b0;
+			out_flag_inicio = 1'b0;
+			out_dato_inicio = 8'h00;
+			out_en_funcion_rtc = 1'b1;
 			case(q_reg)
 				4'd0: out_addr_ram_rtc = 8'hF1; 
 				4'd1: out_addr_ram_rtc = 8'h21;
@@ -336,22 +286,25 @@ always@*
 				4'd4: out_addr_ram_rtc = 8'hF2;
 				4'd5: out_addr_ram_rtc = 8'h41;
 				4'd6: out_addr_ram_rtc = 8'h42; 
-				4'd7: begin
-					out_addr_ram_rtc = 8'h43; 
-					//reset_count = 1'b1;
-						end
-						
+				4'd7: out_addr_ram_rtc = 8'h43;
+				4'd8:begin if (out_funcion_conf == 3'b000) state_next = escritura_hora_fecha;
+				else state_next = lectura_configuracion_fecha;
+				end
 				default: begin
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end
-				
-			endcase
+				endcase
 			end
-			////// CONFIGURANDO TIMER
-			2'd3: begin
-				reg_hora_timer = 1'b1;
-				case(q_reg)
+			//////////
+			lectura_configuracion_timer:begin
+			out_en_funcion_rtc = 1'b1;
+			next_sel_bloque = 3'd5;
+			out_funcion_w_r = 1'b0;
+			out_flag_inicio = 1'b0;
+			out_dato_inicio = 8'h00;
+			out_en_funcion_rtc = 1'b1;
+			case(q_reg)
 				4'd0: out_addr_ram_rtc = 8'hF1;
 				4'd1: out_addr_ram_rtc = 8'h21;
 				4'd2: out_addr_ram_rtc = 8'h22;
@@ -359,22 +312,21 @@ always@*
 				4'd4: out_addr_ram_rtc = 8'h24;
 				4'd5: out_addr_ram_rtc = 8'h25;
 				4'd6: out_addr_ram_rtc = 8'h26;
-				4'd7: begin out_addr_ram_rtc = 8'h27; 
-				//reset_count = 1'b1;
+				4'd7: out_addr_ram_rtc = 8'h27; 
+				4'd8: begin
+				if(out_funcion_conf == 3'b000) state_next = escritura_timer;
+				else state_next = lectura_configuracion_timer;
 				end
-				
 				default: begin
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end 
 				endcase
-			end
-			endcase
 		end
 		default: begin state_next = espera;
 		out_en_funcion_rtc = 1'b0;
 		sel_count = 2'd0;
-		reg_hora_timer = 1'b0;
+		next_sel_bloque = 3'd0;
 		out_dato_inicio  = 8'h00;
 		out_en_funcion_rtc = 1'b0;
 		out_funcion_w_r = 1'b0;
@@ -387,3 +339,4 @@ end
 
 
 endmodule
+
