@@ -1,5 +1,4 @@
 
-# PlanAhead Generated IO constraints 
 
 NET "btn_Nexys[4]" IOSTANDARD = LVCMOS33;
 NET "btn_Nexys[3]" IOSTANDARD = LVCMOS33;
@@ -46,7 +45,6 @@ NET "dato_RTC[2]" PULLUP;
 NET "dato_RTC[1]" PULLUP;
 NET "dato_RTC[0]" PULLUP;
 
-# PlanAhead Generated physical constraints 
 
 NET "btn_Nexys[4]" LOC = E16;
 NET "btn_Nexys[3]" LOC = R10;
@@ -84,3 +82,11 @@ NET "a_d" LOC = B13;
 NET "rd" LOC = F14;
 NET "wr" LOC = D17;
 NET "cs" LOC = E17;
+
+# PlanAhead Generated IO constraints 
+
+NET "sw_Nexys[3]" IOSTANDARD = LVCMOS33;
+
+# PlanAhead Generated physical constraints 
+
+NET "sw_Nexys[3]" LOC = R6;

@@ -64,14 +64,15 @@ debouncing Instancia_debouncing
 Contol_RTC Instancia_Control_RTC(
 .clk(clk),
 .reset(reset),
-.sw1(sw_db[0]),
-.sw2(sw_db[1]),
+.sw0(sw_db[0]),
+.sw1(sw_db[1]),
+.sw2(sw_db[2]),
 .enUP(btn_db[0]),
 .enDOWN(btn_db[1]),
 .enRIGHT(btn_db[3]),
 .enLEFT(btn_db[2]),
 .desactivar_alarma(btn_db[4]),
-.formato_hora(sw_db[2]),
+.formato_hora(sw_db[3]),
 .dato(dato_RTC),
 	
 .a_d(a_d),
