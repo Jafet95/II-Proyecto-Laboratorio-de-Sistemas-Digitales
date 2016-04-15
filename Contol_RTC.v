@@ -353,7 +353,7 @@ begin
 	if(formato_hora)//12 hrs (Traduce a formato 12 hrs)
 	begin
 		case(data_HH)
-		8'd0: begin digit1_HH = 4'b0000; digit0_HH = 4'b0000; AM_PM = 0; end//00 BCD en 8 bits
+		8'd0: begin digit1_HH = 4'b0001; digit0_HH = 4'b0010; AM_PM = 0; end//00 BCD en 8 bits
 		8'd1: begin digit1_HH = 4'b0000; digit0_HH = 4'b0001; AM_PM = 0; end//01 BCD en 8 bits
 		8'd2: begin digit1_HH = 4'b0000; digit0_HH = 4'b0010; AM_PM = 0; end//02 BCD en 8 bits
 		8'd3: begin digit1_HH = 4'b0000; digit0_HH = 4'b0011; AM_PM = 0; end//03 BCD en 8 bits
@@ -367,17 +367,17 @@ begin
 		8'd17: begin digit1_HH = 4'b0001; digit0_HH = 4'b0001; AM_PM = 0; end//11 BCD en 8 bits
 		
 		8'd18: begin digit1_HH = 4'b0001; digit0_HH = 4'b0010; AM_PM = 1; end//12 BCD en 8 bits
-		8'd19: begin digit1_HH = 4'b0001; digit0_HH = 4'b0011; AM_PM = 1; end//13 BCD en 8 bits
-		8'd20: begin digit1_HH = 4'b0001; digit0_HH = 4'b0100; AM_PM = 1; end//14 BCD en 8 bits
-		8'd21: begin digit1_HH = 4'b0001; digit0_HH = 4'b0101; AM_PM = 1; end//15 BCD en 8 bits
-		8'd22: begin digit1_HH = 4'b0001; digit0_HH = 4'b0110; AM_PM = 1; end//16 BCD en 8 bits
-		8'd23: begin digit1_HH = 4'b0001; digit0_HH = 4'b0111; AM_PM = 1; end//17 BCD en 8 bits
-		8'd24: begin digit1_HH = 4'b0001; digit0_HH = 4'b1000; AM_PM = 1; end//18 BCD en 8 bits
-		8'd25: begin digit1_HH = 4'b0001; digit0_HH = 4'b1001; AM_PM = 1; end//19 BCD en 8 bits
-		8'd32: begin digit1_HH = 4'b0010; digit0_HH = 4'b0000; AM_PM = 1; end//20 BCD en 8 bits
-		8'd33: begin digit1_HH = 4'b0010; digit0_HH = 4'b0001; AM_PM = 1; end//21 BCD en 8 bits
-		8'd34: begin digit1_HH = 4'b0010; digit0_HH = 4'b0010; AM_PM = 1; end//22 BCD en 8 bits
-		8'd35: begin digit1_HH = 4'b0010; digit0_HH = 4'b0011; AM_PM = 1; end//23 BCD en 8 bits
+		8'd19: begin digit1_HH = 4'b0000; digit0_HH = 4'b0001; AM_PM = 1; end//13 BCD en 8 bits
+		8'd20: begin digit1_HH = 4'b0000; digit0_HH = 4'b0010; AM_PM = 1; end//14 BCD en 8 bits
+		8'd21: begin digit1_HH = 4'b0000; digit0_HH = 4'b0011; AM_PM = 1; end//15 BCD en 8 bits
+		8'd22: begin digit1_HH = 4'b0000; digit0_HH = 4'b0100; AM_PM = 1; end//16 BCD en 8 bits
+		8'd23: begin digit1_HH = 4'b0000; digit0_HH = 4'b0101; AM_PM = 1; end//17 BCD en 8 bits
+		8'd24: begin digit1_HH = 4'b0000; digit0_HH = 4'b0110; AM_PM = 1; end//18 BCD en 8 bits
+		8'd25: begin digit1_HH = 4'b0000; digit0_HH = 4'b0111; AM_PM = 1; end//19 BCD en 8 bits
+		8'd32: begin digit1_HH = 4'b0000; digit0_HH = 4'b1000; AM_PM = 1; end//20 BCD en 8 bits
+		8'd33: begin digit1_HH = 4'b0000; digit0_HH = 4'b1001; AM_PM = 1; end//21 BCD en 8 bits
+		8'd34: begin digit1_HH = 4'b0001; digit0_HH = 4'b0000; AM_PM = 1; end//22 BCD en 8 bits
+		8'd35: begin digit1_HH = 4'b0001; digit0_HH = 4'b0001; AM_PM = 1; end//23 BCD en 8 bits
 		default:  begin digit1_HH = 0; digit0_HH = 0; AM_PM = 0; end
 		endcase
 	end
