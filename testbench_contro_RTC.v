@@ -27,6 +27,7 @@ module testbench_contro_RTC;
 	// Inputs
 	reg clk;
 	reg reset;
+	reg sw0;
 	reg sw1;
 	reg sw2;
 	reg enUP;
@@ -62,6 +63,7 @@ module testbench_contro_RTC;
 	Contol_RTC uut (
 		.clk(clk), 
 		.reset(reset), 
+		.sw0(sw0),
 		.sw1(sw1), 
 		.sw2(sw2), 
 		.enUP(enUP), 
@@ -94,6 +96,7 @@ always #10 clk = ~clk;
 		// Initialize Inputs
 		clk = 0;
 		reset = 1;
+		sw0 = 0;
 		sw1 = 0;
 		sw2 = 0;
 		enUP = 0;
@@ -106,7 +109,7 @@ always #10 clk = ~clk;
 		// Wait 100 ns for global reset to finish
 		#10 reset = 0;
 		//#40 dato = 8'd12;
-		#5000 sw2 = 1;
+		#500 sw1 = 1;
 		#2000 sw2 = 0;
 		#1000000 $stop;
         

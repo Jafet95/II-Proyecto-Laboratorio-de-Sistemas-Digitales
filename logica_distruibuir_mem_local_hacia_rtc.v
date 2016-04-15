@@ -19,7 +19,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module logica_distruibuir_mem_local_hacia_rtc(
-	input clk,reset,
 	input reg_wr,
 	input [3:0]in_addr_mem_local,
 	input [7:0]in_seg_hora,
@@ -38,9 +37,7 @@ reg [7:0]out_dato;
 assign out_dato_para_rtc = out_dato;
 
 
-always @(posedge clk, posedge reset) begin
-if (reset) out_dato = 0;
-else begin
+always @* begin
 	if (~reg_wr) begin
 	case (in_addr_mem_local)
 		4'd0: out_dato = in_seg_hora;
@@ -57,7 +54,6 @@ else begin
 		endcase
 		end
 		else out_dato = 8'd0;
-end
 end
 
 

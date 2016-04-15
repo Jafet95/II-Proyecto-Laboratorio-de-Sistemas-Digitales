@@ -285,8 +285,6 @@ decofdificador_cs_registros logica_para_cs_registros (
 
 /////////// intancia logica_distruibuir_mem_local_hacia_rtc
 logica_distruibuir_mem_local_hacia_rtc instancia_logica_distruibuir_mem_local_hacia_rtc (
-    .clk(clk), 
-    .reset(reset), 
     .reg_wr(wr), 
     .in_addr_mem_local(addr_mem_local), 
     .in_seg_hora(out_seg_hora), 

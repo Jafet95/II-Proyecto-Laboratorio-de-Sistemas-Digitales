@@ -172,7 +172,6 @@ always@*
 				4'd5: out_addr_ram_rtc = 8'h26;
 				4'd6: out_addr_ram_rtc = 8'h27;
 				4'd7:	out_addr_ram_rtc = 8'hF1;
-				
 				4'd8: begin state_next = lectura_cte;
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
