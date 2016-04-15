@@ -22,7 +22,7 @@ module top_reloj_digital
 (
 input clk,
 input reset,
-input wire [2:0]sw_Nexys,//Modo configuración (x2), formato_hora
+input wire [3:0]sw_Nexys,//Modo configuración (x3), formato_hora
 input wire [4:0]btn_Nexys,//Botones de desplazamiento en la configuración (x4), desactivar alarma timer
 
 inout [7:0]dato_RTC,	
@@ -38,7 +38,7 @@ output wire [11:0] RGB
 
 //Conexiones entre módulos
 //FSM antirrebote
-wire [2:0]sw_db;//Modo configuración (x2), formato_hora
+wire [3:0]sw_db;//Modo configuración (x3), formato_hora
 wire [4:0]btn_db;//Botones de desplazamiento en la configuración (x4), desactivar alarma timer
 
 //Control RTC a VGA
@@ -54,7 +54,7 @@ debouncing Instancia_debouncing
 (
 .clk(clk),
 .reset(reset),
-.sw(sw_Nexys),//3 interruptores
+.sw(sw_Nexys),//4 interruptores
 .btn(btn_Nexys),//5 botones
 .sw_db(sw_db),//debounce
 .btn_db(btn_db)//debounce
@@ -100,9 +100,9 @@ Clock_screen_top Instancia_Clock_screen_top
 
 .AM_PM(AM_PM),//Entrada para conocer si en la información de hora se despliega AM o PM
 .dia_semana(out_dia_semana),//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-.config_mode({sw_db[1],sw_db[0]}),//Cuatro estados del modo configuración
+.config_mode({sw_db[2],sw_db[1],sw_db[0]}),//Cuatro estados del modo configuración
 .cursor_location(cursor_location),//Marca la posición del cursor en modo configuración
-.formato_hora(sw_db[2]),//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
+.formato_hora(sw_db[3]),//Señal que indica si la hora esta en formato 12 hrs o 24 hrs (0->24 hrs)
 .estado_alarma(estado_alarma),
 
 .hsync(hsync),

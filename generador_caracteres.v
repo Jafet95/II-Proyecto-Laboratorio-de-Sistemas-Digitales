@@ -26,7 +26,7 @@ digit0_DAY, digit1_DAY, digit0_MES, digit1_MES, digit0_YEAR, digit1_YEAR,//
 digit0_HH_T, digit1_HH_T, digit0_MM_T, digit1_MM_T, digit0_SS_T, digit1_SS_T,//Decenas y unidades para los números en pantalla (18 inputs de 3 bits)
 input wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
 input wire [7:0] dia_semana,//Para interpretar el dia de la semana a escribir (3-bits: 7 días)
-input wire [1:0] config_mode,//Cuatro estados del modo configuración
+input wire [2:0] config_mode,//Cuatro estados del modo configuración
 input wire [1:0] cursor_location,//Marca la posición del cursor en modo configuración
 input wire [9:0] pixel_x, pixel_y,//Coordenada de cada pixel
 input wire parpadeo,
@@ -412,11 +412,11 @@ text_RGB = 12'b0;//Fondo negro
       bit_addr = bit_addr_digTIMER;
 			//(0: Los dos dígitos a la derecha, 1: Los dos dígitos intermedios, 2: Los dos dígitos a la izquierda)
 			if(font_bit) text_RGB = 12'hFFF; //Blanco
-			else if ((parpadeo)&&(~font_bit)&&(config_mode == 3)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=25)&&(pixel_x[9:4]<=26)&&(cursor_location==2)) 
+			else if ((parpadeo)&&(~font_bit)&&(config_mode == 4)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=25)&&(pixel_x[9:4]<=26)&&(cursor_location==2)) 
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((parpadeo)&&(~font_bit)&&(config_mode == 3)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=28)&&(pixel_x[9:4]<=29)&&(cursor_location==1))
+			else if ((parpadeo)&&(~font_bit)&&(config_mode == 4)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=28)&&(pixel_x[9:4]<=29)&&(cursor_location==1))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
-			else if ((parpadeo)&&(~font_bit)&&(config_mode == 3)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=31)&&(pixel_x[9:4]<=32)&&(cursor_location==0))
+			else if ((parpadeo)&&(~font_bit)&&(config_mode == 4)&&(pixel_y[9:5]==12)&&(pixel_x[9:4]>=31)&&(pixel_x[9:4]<=32)&&(cursor_location==0))
 			text_RGB = 12'h000;//Hace un cursor si se está en modo configuración
 			else if(~font_bit) text_RGB = 12'h0AA;//Fondo del texto igual al de los recuadros
 		end

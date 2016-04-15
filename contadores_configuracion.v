@@ -26,7 +26,7 @@ input wire enUP,
 input wire enDOWN,
 input wire enLEFT,
 input wire enRIGHT,
-input wire [1:0] config_mode,//Cuatro estados del modo configuración
+input wire [2:0] config_mode,//Cuatro estados del modo configuración
 output wire [7:0] btn_data_SS, btn_data_MM, btn_data_HH, btn_data_YEAR, btn_data_MES, btn_data_DAY,
 btn_data_SS_T, btn_data_MM_T, btn_data_HH_T,//Decenas y unidades para los números en pantalla(configuración)
 output wire AM_PM,//Entrada para conocer si en la información de hora se despliega AM o PM
@@ -91,12 +91,12 @@ begin
 	q_next = 5'd2;
 	end
 	
-	else if(enLEFT_tick && q_act == 2 && config_mode == 3)
+	else if(enLEFT_tick && q_act == 2 && config_mode == 4)
 	begin
 	q_next = 5'd0;
 	end
 	
-	else if(enRIGHT_tick && q_act == 0 && config_mode == 3)
+	else if(enRIGHT_tick && q_act == 0 && config_mode == 4)
 	begin
 	q_next = 5'd2;
 	end	
@@ -217,12 +217,12 @@ always@*
 
 	case(config_mode)//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 3: config.timer)
 
-	2'd0://Modo normal no habilita ningún contador
+	3'd0://Modo normal no habilita ningún contador
 	begin
 	enable_counters = 4'b0;
 	end
 	
-	2'd1:
+	3'd1:
 	begin
 		case(count_horizontal)
 		
@@ -233,7 +233,7 @@ always@*
 	
 		endcase
 	end
-	2'd2:
+	3'd2:
 		case(count_horizontal)
 		
 		2'd0: enable_counters = 4'd4;//Año 
@@ -242,7 +242,7 @@ always@*
 		2'd3: enable_counters = 4'd7;//Día de la semana
 		
 		endcase
-	2'd3:
+	3'd4:
 		case(count_horizontal)
 		
 		2'd0: enable_counters = 4'd8;//SS_T
@@ -251,7 +251,7 @@ always@*
 		default: enable_counters = 4'd0;
 		
 		endcase
-
+	default: enable_counters = 4'b0;
 	endcase
 
 assign cursor_location = count_horizontal;
