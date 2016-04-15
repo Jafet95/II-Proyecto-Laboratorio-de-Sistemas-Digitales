@@ -84,8 +84,10 @@ begin
   if (reset) begin 
      state_reg <= espera;
 	  end
-  else 
+  else begin
      state_reg <= state_next;
+	  reg_sel_bloque = next_sel_bloque;
+	  end
 end
 
 reg [2:0]reg_sel_bloque;
@@ -102,7 +104,7 @@ always@*
 	begin
 	out_addr_ram_rtc = 8'h00;
 	state_next = state_reg;	
-	reg_sel_bloque = next_sel_bloque;
+	
 	case(state_reg)
 		espera:  
 			begin
@@ -173,7 +175,7 @@ always@*
 				4'd6: out_addr_ram_rtc = 8'h27;
 				4'd7:	out_addr_ram_rtc = 8'hF1;
 				4'd8: begin state_next = lectura_cte;
-				out_en_funcion_rtc = 1'b0;
+				//out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end
 				
@@ -201,7 +203,7 @@ always@*
 				4'd2: out_addr_ram_rtc = 8'h43;
 				4'd3: out_addr_ram_rtc = 8'hF2;
 				4'd4: begin state_next = lectura_cte;
-				out_en_funcion_rtc = 1'b0;
+				//out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end
 				default: out_en_funcion_rtc = 1'b0;
@@ -270,7 +272,8 @@ always@*
 				endcase
 			end
 			
-			lectura_configuracion_fecha: begin
+			lectura_configuracion_fecha: 
+			begin
 			out_en_funcion_rtc = 1'b1;
 			next_sel_bloque = 3'd4;
 			out_funcion_w_r = 1'b0;
