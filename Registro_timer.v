@@ -26,13 +26,11 @@ module Registro_timer(
 		input wire reset, //system reset
 		input wire chip_select, //Control data
 		input wire estado_alarma,
-		input wire btn_desactivar,
 		output wire [7:0]out_dato_vga,
 		output wire [7:0]out_dato_rtc,
 		output wire flag_out
     );
-reg flag_out_reg;
-reg flag_out_next;
+
 reg [7:0]reg_dato;
 reg [7:0]next_dato;
 reg [7:0]dato_temp;
@@ -57,24 +55,11 @@ always@*
 	else next_dato = reg_dato;
 	end
 	
-///////// hold del flag	/////////////////////
 
-assign flag_timer_up = (reg_dato == dato_temp)? 1'b1:1'b0;
-assign flag_out = flag_out_reg;
- 
-always@(posedge clk, posedge reset)
-begin
-	if(reset) flag_out_reg <= 1'b0;
-	else flag_out_reg <= flag_out_next;
-end
 
-always@* begin
- if(flag_timer_up) flag_out_next = 1'b1;
- else if (btn_desactivar) flag_out_next = 1'b0;
- else flag_out_next = flag_out_reg;
-end
 /////////////////////////////////////////////////
-
-assign out_dato_vga = (estado_alarma)? dato_temp : reg_dato;
+assign flag_out =(reg_dato == dato_temp)? 1'b1:1'b0;
+assign out_dato_vga = (estado_alarma)? dato_temp:reg_dato;
 assign out_dato_rtc = 8'h00;
+
 endmodule

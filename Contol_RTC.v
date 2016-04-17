@@ -193,6 +193,7 @@ memoria_registros intancia_memoria_registros (
     .clk(clk), 
     .reset(reset), 
 	 .desactivar_alarma(desactivar_alarma),
+	 .sw2(sw2),
     .cs_seg_hora(cs_seg_hora), 
     .cs_min_hora(cs_min_hora), 
     .cs_hora_hora(cs_hora_hora), 

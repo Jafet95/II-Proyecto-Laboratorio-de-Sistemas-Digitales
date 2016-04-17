@@ -47,6 +47,8 @@ reg reset_count;
 reg reg_hora_timer;
 reg flag_config;
 reg [1:0]sel_count;
+reg [2:0]reg_sel_bloque;
+reg [2:0]next_sel_bloque;
 
 assign out_funcion_conf = {in_sw2,in_sw1,in_sw0};
 
@@ -60,9 +62,7 @@ lectura_configuracion_timer = 4'd5,
 escritura_hora_fecha = 4'd6,
 escritura_timer = 4'd7; 
 
-  
-//Descripción del comportamiento
-
+ //////////////// contador para FSM (avanza cada vez que llega la bandera in_flag_done) 
 always @(posedge clk, posedge reset_count)
 begin
 	if (reset_count) q_reg = 1'b0;
@@ -76,7 +76,6 @@ end
 else q_next = q_reg;
 end
  
-
 //////////////////////////
 ////logica secuencial
 always @(posedge clk, posedge reset)
@@ -90,14 +89,10 @@ begin
 	  end
 end
 
-reg [2:0]reg_sel_bloque;
-reg [2:0]next_sel_bloque;
 always @* begin
 	if(reg_sel_bloque != next_sel_bloque) reset_count = 1'b1;
 	else reset_count = 1'b0;
 end
-
-
 
 ////logica combinacional
 always@*
@@ -175,7 +170,6 @@ always@*
 				4'd6: out_addr_ram_rtc = 8'h27;
 				4'd7:	out_addr_ram_rtc = 8'hF1;
 				4'd8: begin state_next = lectura_cte;
-				//out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
 				end
 				
@@ -202,8 +196,12 @@ always@*
 				4'd1: out_addr_ram_rtc = 8'h42;
 				4'd2: out_addr_ram_rtc = 8'h43;
 				4'd3: out_addr_ram_rtc = 8'hF2;
-				4'd4: begin state_next = lectura_cte;
-				//out_en_funcion_rtc = 1'b0;
+				4'd4: begin 
+				out_flag_inicio = 1'b1;
+				out_addr_ram_rtc = 8'h0;
+				out_dato_inicio = 8'h08;
+				end
+				4'd5: begin state_next = lectura_cte;
 				out_addr_ram_rtc = 8'h00;
 				end
 				default: out_en_funcion_rtc = 1'b0;

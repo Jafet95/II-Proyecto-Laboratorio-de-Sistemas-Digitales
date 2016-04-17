@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module memoria_registros( 
-	input clk, reset, desactivar_alarma,
+	input clk, reset, desactivar_alarma, sw2,
 	
 	input cs_seg_hora,cs_min_hora,cs_hora_hora,
 	input cs_dia_fecha,cs_mes_fecha,cs_jahr_fecha,cs_dia_semana,
@@ -43,11 +43,12 @@ module memoria_registros(
 	output [7:0]out_seg_timer_rtc,out_min_timer_rtc,out_hora_timer_rtc,
 	output [7:0]out_seg_timer_vga,out_min_timer_vga,out_hora_timer_vga,
 	
-	output wire estado_alarma
+	output reg estado_alarma
     );
 	 
 wire flag1,flag2,flag3;
-assign estado_alarma = (flag1 && flag2 && flag3)? 1'b1:1'b0;
+wire flag_done_timer;
+assign flag_done_timer = (flag1 && flag2 && flag3)? 1'b1:1'b0;
 
  
 ////////intancia reg seg_hora
@@ -129,7 +130,6 @@ Registro_timer instancia_seg_timer (
     .reset(reset), 
     .chip_select(cs_seg_timer), 
 	 .estado_alarma(estado_alarma),
-	 .btn_desactivar(desactivar_alarma),
     .out_dato_vga(out_seg_timer_vga), 
     .out_dato_rtc(out_seg_timer_rtc), 
     .flag_out(flag1)
@@ -143,7 +143,6 @@ Registro_timer instancia_min_timer (
     .reset(reset), 
     .chip_select(cs_min_timer), 
 	 .estado_alarma(estado_alarma),
-	 .btn_desactivar(desactivar_alarma),
     .out_dato_vga(out_min_timer_vga), 
     .out_dato_rtc(out_min_timer_rtc), 
     .flag_out(flag2)
@@ -157,10 +156,63 @@ Registro_timer instancia_hora_timer(
     .reset(reset), 
     .chip_select(cs_hora_timer), 
 	 .estado_alarma(estado_alarma),
-	 .btn_desactivar(desactivar_alarma),
     .out_dato_vga(out_hora_timer_vga), 
     .out_dato_rtc(out_hora_timer_rtc), 
     .flag_out(flag3)
     );
+	 
+	 
+	 
+///////  FSM para alarma timer //////////
+
+localparam [1:0]
+espera_conf = 2'b00,
+conf = 2'b01,
+timer_run = 2'b10,
+alarma_on = 2'b11;
+
+reg [1:0] state_reg , state_next;
+//// secuancial
+always@(posedge clk , posedge reset) 
+begin
+if (reset) state_reg = espera_conf;
+else state_reg = state_next;
+end
+/// combinacional
+always@*
+begin
+state_next = state_reg ; 
+case (state_reg)
+	espera_conf: begin
+	estado_alarma = 1'b0;
+		if(sw2) state_next = conf;
+		else state_next = espera_conf;
+	end
+	conf: begin
+	estado_alarma = 1'b0;
+	if(~sw2) state_next = timer_run;
+	else state_next = conf;
+	end
+	timer_run: begin
+	estado_alarma = 1'b0;
+	if (flag_done_timer) state_next = alarma_on;
+	else state_next = timer_run;
+	end
+	alarma_on: begin
+	estado_alarma = 1'b1;
+	if (desactivar_alarma) state_next = espera_conf;
+	else state_next = alarma_on;
+	end
+endcase
+end
+
+
+
+
+
+
+
+
+/////////////////////////////////////////
 
 endmodule 
