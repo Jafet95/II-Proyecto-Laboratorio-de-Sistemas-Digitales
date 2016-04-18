@@ -37,16 +37,12 @@ module logica_para_Escribir_Leer_Mux(
 	inout tri [7:0]dato, //Dato de RTC
 	
 	
-	input controlador_dato //Para controlar condicional si lerr o escribir
+	input controlador_dato //Para controlar condicional si leer o escribir
 	 
     );
-//dato de direccion RAM
-//reg [7:0]dato_direccion;
-//Dato usado para trabajar en el modulo
-
+ 
 reg [7:0]dato_secundario;
 reg [7:0]in_reg_dato;
-reg [7:0]temp_dato;
 
 //*********************************************************
  

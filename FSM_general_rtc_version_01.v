@@ -136,7 +136,39 @@ always@*
 				out_addr_ram_rtc = 8'h0;
 				out_dato_inicio = 8'h00;
 				end
-				4'd4: begin 
+				4'd4: begin
+				out_addr_ram_rtc = 8'h21;
+				out_dato_inicio = 8'h00;
+				end
+				4'd5: begin
+				out_addr_ram_rtc = 8'h22;
+				out_dato_inicio = 8'h00;
+				end
+				4'd6: begin
+				out_addr_ram_rtc = 8'h23;
+				out_dato_inicio = 8'h00;
+				end
+				4'd7: begin
+				out_addr_ram_rtc = 8'h24;
+				out_dato_inicio = 8'h00;
+				end
+				4'd8: begin
+				out_addr_ram_rtc = 8'h25;
+				out_dato_inicio = 8'h00;
+				end
+				4'd9: begin
+				out_addr_ram_rtc = 8'h26;
+				out_dato_inicio = 8'h00;
+				end
+				4'd10: begin
+				out_addr_ram_rtc = 8'h27;
+				out_dato_inicio = 8'h00;
+				end
+				4'd11: begin
+				out_addr_ram_rtc = 8'hF1;
+				out_dato_inicio = 8'h00;
+				end
+				4'd12: begin 
 				state_next = lectura_cte;
 				out_en_funcion_rtc = 1'b0;
 				out_addr_ram_rtc = 8'h00;
