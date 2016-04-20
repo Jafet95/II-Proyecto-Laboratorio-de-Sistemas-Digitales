@@ -43,12 +43,13 @@ module memoria_registros(
 	output [7:0]out_seg_timer_rtc,out_min_timer_rtc,out_hora_timer_rtc,
 	output [7:0]out_seg_timer_vga,out_min_timer_vga,out_hora_timer_vga,
 	
-	output reg estado_alarma
+	output reg estado_alarma,
+	output reg flag_mostrar_count
     );
 	 
-wire flag1,flag2,flag3;
-wire flag_done_timer;
-assign flag_done_timer = (flag1 && flag2 && flag3)? 1'b1:1'b0;
+//wire flag1,flag2,flag3;
+reg flag_done_timer;
+//assign flag_done_timer = (flag1 && flag2 && flag3)? 1'b1:1'b0;
 
  
 ////////intancia reg seg_hora
@@ -128,11 +129,9 @@ Registro_timer instancia_seg_timer (
     .in_count_dato(count_seg_timer), 
     .clk(clk), 
     .reset(reset), 
-    .chip_select(cs_seg_timer), 
-	 .estado_alarma(estado_alarma),
+    .chip_select(cs_seg_timer),
     .out_dato_vga(out_seg_timer_vga), 
-    .out_dato_rtc(out_seg_timer_rtc), 
-    .flag_out(flag1)
+    .out_dato_rtc(out_seg_timer_rtc)
     );
 ////////intancia reg min_timer
 Registro_timer instancia_min_timer (
@@ -142,10 +141,8 @@ Registro_timer instancia_min_timer (
     .clk(clk), 
     .reset(reset), 
     .chip_select(cs_min_timer), 
-	 .estado_alarma(estado_alarma),
     .out_dato_vga(out_min_timer_vga), 
-    .out_dato_rtc(out_min_timer_rtc), 
-    .flag_out(flag2)
+    .out_dato_rtc(out_min_timer_rtc)
     );
 ////////intancia reg hora_timer
 Registro_timer instancia_hora_timer(
@@ -154,13 +151,18 @@ Registro_timer instancia_hora_timer(
     .in_count_dato(count_hora_timer), 
     .clk(clk), 
     .reset(reset), 
-    .chip_select(cs_hora_timer), 
-	 .estado_alarma(estado_alarma),
+    .chip_select(cs_hora_timer),
     .out_dato_vga(out_hora_timer_vga), 
-    .out_dato_rtc(out_hora_timer_rtc), 
-    .flag_out(flag3)
+    .out_dato_rtc(out_hora_timer_rtc)
     );
-	 
+
+//Para generar flag_done_timer
+always@(posedge clk)
+begin
+	if(reset) flag_done_timer <= 1'b0;
+	else if((rtc_seg_timer == count_seg_timer)&&(rtc_min_timer == count_min_timer)&&((count_hora_timer!=0)||(count_min_timer!=0)||(count_seg_timer!=0))&&(estado_alarma==0)) flag_done_timer <= 1'b1;
+	else flag_done_timer <= 1'b0;
+end
 	 
 	 
 ///////  FSM para alarma timer //////////
@@ -184,34 +186,31 @@ begin
 state_next = state_reg ; 
 case (state_reg)
 	espera_conf: begin
+	flag_mostrar_count = 1'b1;
 	estado_alarma = 1'b0;
 		if(sw2) state_next = conf;
 		else state_next = espera_conf;
 	end
 	conf: begin
+	flag_mostrar_count = 1'b1;
 	estado_alarma = 1'b0;
 	if(~sw2) state_next = timer_run;
 	else state_next = conf;
 	end
 	timer_run: begin
+	flag_mostrar_count = 1'b0;
 	estado_alarma = 1'b0;
 	if (flag_done_timer) state_next = alarma_on;
 	else state_next = timer_run;
 	end
 	alarma_on: begin
+	flag_mostrar_count = 1'b1;
 	estado_alarma = 1'b1;
 	if (desactivar_alarma) state_next = espera_conf;
 	else state_next = alarma_on;
 	end
 endcase
 end
-
-
-
-
-
-
-
 
 /////////////////////////////////////////
 

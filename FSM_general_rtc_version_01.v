@@ -150,11 +150,11 @@ always@*
 				end
 				4'd7: begin
 				out_addr_ram_rtc = 8'h24;
-				out_dato_inicio = 8'h00;
+				out_dato_inicio = 8'h01;
 				end
 				4'd8: begin
 				out_addr_ram_rtc = 8'h25;
-				out_dato_inicio = 8'h00;
+				out_dato_inicio = 8'h01;
 				end
 				4'd9: begin
 				out_addr_ram_rtc = 8'h26;
@@ -162,7 +162,7 @@ always@*
 				end
 				4'd10: begin
 				out_addr_ram_rtc = 8'h27;
-				out_dato_inicio = 8'h00;
+				out_dato_inicio = 8'h01;
 				end
 				4'd11: begin
 				out_addr_ram_rtc = 8'hF1;

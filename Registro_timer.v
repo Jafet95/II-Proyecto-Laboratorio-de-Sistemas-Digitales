@@ -25,15 +25,13 @@ module Registro_timer(
 		input wire clk, //system clock
 		input wire reset, //system reset
 		input wire chip_select, //Control data
-		input wire estado_alarma,
 		output wire [7:0]out_dato_vga,
-		output wire [7:0]out_dato_rtc,
-		output wire flag_out
+		output wire [7:0]out_dato_rtc
     );
 
 reg [7:0]reg_dato;
 reg [7:0]next_dato;
-reg [7:0]dato_temp;
+//reg [7:0]dato_temp;
 
 //Secuencial
 always@(negedge clk, posedge reset)
@@ -45,7 +43,6 @@ end
 //Combinacional
 always@*
 	begin
-	dato_temp = in_count_dato;
 	if (~hold) begin
 	case(chip_select)
 	1'b0: next_dato = in_rtc_dato;
@@ -54,12 +51,10 @@ always@*
 	end
 	else next_dato = reg_dato;
 	end
-	
-
 
 /////////////////////////////////////////////////
-assign flag_out =(reg_dato == dato_temp)? 1'b1:1'b0;
-assign out_dato_vga = (estado_alarma)? dato_temp:reg_dato;
+
+assign out_dato_vga = reg_dato;
 assign out_dato_rtc = 8'h00;
 
 endmodule

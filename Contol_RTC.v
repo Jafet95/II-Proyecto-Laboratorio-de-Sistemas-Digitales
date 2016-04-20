@@ -53,6 +53,7 @@ wire [7:0]out_FSM_general_addr_ram_rtc;
 wire [7:0]out_FSM_general_dato_inicio;
 wire out_FSM_general_funcion_w_r;///// 1 escribe en rtc / 0 lee de rtc
 wire out_FSM_general_en_funcion_rtc;
+wire flag_mostrar_count;
 
 wire out_lector_escritor_flag_capturar_dato;
 wire out_lector_escritor_direccion_dato;
@@ -247,7 +248,8 @@ memoria_registros intancia_memoria_registros (
     .out_seg_timer_vga(out_seg_timer), 
     .out_min_timer_vga(out_min_timer), 
     .out_hora_timer_vga(out_hora_timer), 
-    .estado_alarma(estado_alarma)
+    .estado_alarma(estado_alarma),
+	 .flag_mostrar_count(flag_mostrar_count)
     );
 //////////////////////////////////////////////////////////
 
@@ -270,7 +272,8 @@ logica_distributir_dato_rtc_registros instancia_logica_distributir_dato_rtc_regi
 
 ///////////////intnacia logica para cs'=s
 decofdificador_cs_registros logica_para_cs_registros (
-    .funcion_conf(out_FSM_general_funcion_conf), 
+    .funcion_conf(out_FSM_general_funcion_conf),
+	 .flag_mostrar_count(flag_mostrar_count),
     .cs_seg_hora(cs_seg_hora), 
     .cs_min_hora(cs_min_hora), 
     .cs_hora_hora(cs_hora_hora), 

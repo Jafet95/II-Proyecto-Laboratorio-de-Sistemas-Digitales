@@ -32,9 +32,11 @@ output cs,
 output rd,
 output wr,
 output wire hsync,vsync,
-output wire [11:0] RGB
-
+output wire [11:0] RGB,
+output wire clk_ext
 );
+
+assign clk_ext = clk;
 
 //Conexiones entre módulos
 //FSM antirrebote
